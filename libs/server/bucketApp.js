@@ -10,12 +10,12 @@ module.exports=(bucketRouter,DEBUG)=>{
         next()
       })
 
-      
+
     //---------- set server routes
     bucketRouter.get('/list', controllers.bucketList.bind(controllers));
     bucketRouter.post('/create', controllers.createBucket.bind(controllers))
     bucketRouter.post('/:id/update-status', controllers.updateBucketStatus.bind(controllers));
-    bucketRouter.post('/:id/rel/subtask/:todo_id/create', controllers.createSubtask.bind(controllers))
+    bucketRouter.post('/:id/rel/subtask/create', controllers.createSubtask.bind(controllers))
     bucketRouter.post('/:id/rel/subtask/:todo_id/update-status', controllers.updateSubtaskStatus.bind(controllers))
 
     // catch all other routes

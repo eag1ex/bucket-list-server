@@ -7,5 +7,6 @@ const {onMessages} = require('./utils')
  */
 module.exports = onMessages({
     '500':['Server error','500'],
+    '600':['Mongo connection error','600'],
     '001':['Route is no available','001']
 })

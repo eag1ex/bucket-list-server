@@ -3,8 +3,8 @@
 
 module.exports = function (expressApp) {
 
-    const { } = require('x-utils-es/umd')
-    const { toJson } = require('../utils')
+   // const { } = require('x-utils-es/umd')
+  //  const { toJson } = require('../utils')
 
 
     return class ServerController {
@@ -45,7 +45,9 @@ module.exports = function (expressApp) {
                 * */
 
             //if (o.error) return res.status(200).json({ ...o });
-            return res.status(200).json({ params: toJson(req.params), response: true, code: 200 });
+            return res.status(200).json({ 
+                params: req.params, 
+                response: true, code: 200 });
         }
 
 
@@ -76,7 +78,7 @@ module.exports = function (expressApp) {
         /**
          * (POST) REST/api
          * - Create new subtask on current bucket, 
-         * `example:  /bucket/:id/rel/subtask/:todo_id/create`
+         * `example:  /bucket/:id/rel/subtask/create`
          * @returns newlly created subtask
          */
         createSubtask(req, res) {

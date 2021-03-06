@@ -4,7 +4,7 @@ module.exports = (DEBUG = true) => {
     const config = require('../../config');
     const { listRoutes } = require('../utils')
     const messages  = require('../messages')
-    const { log,attention } = require('x-utils-es/umd')
+    const { log,attention,onerror } = require('x-utils-es/umd')
     const express = require('express')
     const app = express()
     const bucketRouter = express.Router();
@@ -28,7 +28,10 @@ module.exports = (DEBUG = true) => {
     app.set('view engine', 'html');
 
 
- 
+    // ------------ init mongo DB
+    const MongoDB = require('../mongoDB').MongoDB()
+    const mongo = new MongoDB(DEBUG)
+
     //---------- Initialize auth check controllers
     new ServerAuth(DEBUG).AppUseAuth()
  
@@ -39,6 +42,7 @@ module.exports = (DEBUG = true) => {
     
     require('./bucketApp')(bucketRouter,DEBUG)
     app.use('/bucket', bucketRouter);
+    
  
     //-----------------------------------
 
@@ -59,14 +63,17 @@ module.exports = (DEBUG = true) => {
     });
 
     //------ run server
-
-    const server = app.listen(config.port, function () {
-        var host = (server.address().address || "").replace(/::/, 'localhost')
-        var port = server.address().port;
-        log('[server]',`runnign on http://${host}:${port}`)
-        attention('[server]','for available routes call: http://localhost:5000/welcome')
+ 
+    return mongo.init().then(async () => {
+        const server = app.listen(config.port, function () {
+            var host = (server.address().address || "").replace(/::/, 'localhost')
+            var port = server.address().port;
+            log('[server]', `runnign on http://${host}:${port}`)
+            attention('[server]', 'for available routes call: http://localhost:5000/welcome')
+        })
+        return server
+    }).catch(err=>{
+        onerror('[mongo]','server did not start')
     })
-
-    return server
 }
 
