@@ -24,6 +24,7 @@
     "lodash": "^4.17.21",
     "moment": "^2.29.1",
     "mongoose": "^5.11.19",
+    "mongoose-validate": "0.0.5",
     "morgan": "^1.10.0",
     "nyc": "^15.1.0",
     "q": "^1.5.1",

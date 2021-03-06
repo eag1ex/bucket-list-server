@@ -1,7 +1,8 @@
 `use strict`
 const { Bucket, Subtask } = require('../mongoDB')
-const { onerror } = require('x-utils-es/umd')
-
+const { onerror,log,copy } = require('x-utils-es/umd')
+const {toJson,cleanOut} = require('../utils')
+const messages = require('../messages')
 class ControllerLibs {
 
     /**
@@ -17,14 +18,19 @@ class ControllerLibs {
             }
         }
 
+        /**
+         * to target and assing new model just call:
+            new this.models.Subtask(data)
+            new this.models.Bucket(data)
+         */
         this.models = {}
         try {
             if (this.config.models.Bucket instanceof Bucket) {
-                this.models.Bucket = this.config.models.Bucket.model()
+                this.models.Bucket = this.config.models.Bucket.$
             }
 
             if (this.config.models.Subtask instanceof Subtask) {
-                this.models.Subtask = this.config.models.Subtask.model()
+                this.models.Subtask = this.config.models.Subtask.$
             }
 
             if (!this.models.Subtask || !this.models.Bucket) {
@@ -40,7 +46,6 @@ class ControllerLibs {
  class ServerController extends ControllerLibs {
     constructor(opts, debug) {
         super(opts, debug)
-        console.log('this.models/Bucket', this.models.Bucket)
     }
 
     /**
@@ -60,25 +65,50 @@ class ControllerLibs {
 
 
     /**
-     * (POST) REST/api
-     * - Make new order
-     * `example:  /bucket/create`
-     * @returns newlly created bucket
+     * (POST) REST/api => /bucket/create
+     * - create new bucket
+     * - accepting: {title}
+     * @returns new bucket {title,id,created_at,subtasks[]}
      */
-    createBucket(req, res) {
+     createBucket(req, res) {
 
-        /*
-            accepting:
-            ● title
- 
-            * */
+         const bodyData = req.body ||{}
+        
+         return (async () => {
 
-        //if (o.error) return res.status(200).json({ ...o });
-        return res.status(200).json({
-            params: req.params,
-            response: true, code: 200
-        });
-    }
+             let payload = {
+                 status: 'pending',
+                 title: bodyData.title,
+                 subtasks: []
+             }
+
+             let bucket = new this.models.Bucket(payload)
+
+             try {
+                 const data = await bucket.save()
+                 return data
+             } catch (err) {
+                 return Promise.reject(err)
+             }
+
+         })().then((data) => {
+             log('[createBucket][done]',data._id)
+             res.status(200).json({
+                 response: cleanOut(data),
+                 code: 200
+             });
+
+         }).catch(error => {
+
+             if(!bodyData.title || (bodyData.title ||'').length<2 ){
+                 return res.status(400).json({ error:'missing title, or too short' });
+             }
+
+             onerror('[createBucket]', error)
+             res.status(400).json({ ...messages['002'] });
+         })
+
+     }
 
 
     /**

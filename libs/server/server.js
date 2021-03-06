@@ -66,6 +66,7 @@ module.exports = (DEBUG = true) => {
 
     //-------- handle errors
     app.use(function (error, req, res, next) {
+        onerror(error)
         res.status(500).json({ error: error.toString(), ...messages['500'] })
     });
 

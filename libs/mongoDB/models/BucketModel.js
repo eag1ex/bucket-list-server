@@ -1,15 +1,15 @@
 
-
+const validate = require('mongoose-validate')
 const mongoose = require('mongoose')
 
 /*
 Bucket class
-example: `new Bucket().model` 
+example: `new Bucket().model/$` 
 **/
 class Bucket {
 
     constructor() {
-        this.model = null
+        this.model = this.$ = null
         this.create()
     }
 
@@ -20,18 +20,22 @@ class Bucket {
                 title: {
                     type: String,
                     required: true,
+                    validate: [validate.alphanumeric, 'Invalid title']
                 },
 
                 // [pending,completed]
                 status: {
                     type: String,
                     required: true,
+                    validate: [validate.alpha, 'Invalid status']
                 },
-                created: {
-                    type: Date,
+                subtasks:{
+                    type:Array,
                     required: true,
                 }
-            })
+            },
+            { timestamps: { createdAt: 'created_at' } }
+            )
 
         // Schema.set('autoIndex', false)
         // Schema.set('versionKey', false)
@@ -42,7 +46,7 @@ class Bucket {
 
         this.validators(Model,name)
         this.model = Model
-
+        this.$ = this.model   
         return this
     }
 

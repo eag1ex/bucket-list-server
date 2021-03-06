@@ -1,16 +1,16 @@
 
-
+const validate = require('mongoose-validate')
 const mongoose = require('mongoose')
 
 
 /*
 Subtask class
-example: `new Subtask().model` 
+example: `new Subtask().model/$` 
 **/
 class Subtask {
 
     constructor() {
-        this.model = null
+        this.model = this.$ = null
         this.create()
     }
 
@@ -21,19 +21,19 @@ class Subtask {
                 title: {
                     type: String,
                     required: true,
+                    validate: [validate.alphanumeric, 'Invalid title']
                 },
 
                 // [pending,completed]
                 status: {
                     type: String,
                     required: true,
-                },
-                created: {
-                    type: Date,
-                    required: true,
+                    validate: [validate.alpha, 'Invalid status']
                 }
-            })
-
+            },
+            { timestamps: { createdAt: 'created_at' } }
+            )
+            
         // Schema.set('autoIndex', false)
         // Schema.set('versionKey', false)
 
@@ -43,6 +43,7 @@ class Subtask {
         this.validators(Model,name)
 
         this.model = Model
+        this.$ = this.model
         return this
     }
 
