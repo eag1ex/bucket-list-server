@@ -3,14 +3,14 @@
 module.exports = (DEBUG = true) => {
     const config = require('../../config');
     const { listRoutes } = require('../utils')
-    const messages  = require('../messages')
-    const { log,attention,onerror } = require('x-utils-es/umd')
+    const messages = require('../messages')
+    const { log, attention, onerror } = require('x-utils-es/umd')
     const express = require('express')
     const app = express()
     const bucketRouter = express.Router();
     const morgan = require('morgan')
     const bodyParser = require('body-parser');
-    
+
     const ServerAuth = require('./auth')(app)
 
     const cors = require('cors');
@@ -30,30 +30,37 @@ module.exports = (DEBUG = true) => {
 
     // ------------ init mongo DB
     const MongoDB = require('../mongoDB').MongoDB()
+    // initialise and wait for init to resolve
     const mongo = new MongoDB(DEBUG)
 
     //---------- Initialize auth check controllers
-    new ServerAuth(DEBUG).AppUseAuth()
- 
+    try {
+        new ServerAuth(DEBUG).AppUseAuth()
+    } catch (err) {
+        onerror('[ServerAuth]', err)
+    }
 
-   
 
     // ----- load our apps routes
-    
-    require('./bucketApp')(bucketRouter,DEBUG)
-    app.use('/bucket', bucketRouter);
-    
- 
+    try {
+        require('./bucketApp')(mongo, bucketRouter, DEBUG)
+        app.use('/bucket', bucketRouter);
+    } catch (err) {
+        onerror('[bucketApp]', err)
+    }
+
+
+
     //-----------------------------------
 
-    app.use('/welcome', function(req, res){
-        return res.status(200).json({ success: true, message: 'works fine', url: req.url, available_routes: listRoutes(bucketRouter.stack,'/bucket'), status: 200 });
+    app.use('/welcome', function (req, res) {
+        return res.status(200).json({ success: true, message: 'works fine', url: req.url, available_routes: listRoutes(bucketRouter.stack, '/bucket'), status: 200 });
     });
 
 
-     // catch all other routes
-     app.all("*", function (req, res) {
-        res.status(400).json({  ...messages['001'], error:true })
+    // catch all other routes
+    app.all("*", function (req, res) {
+        res.status(400).json({ ...messages['001'], error: true })
     })
 
 
@@ -63,7 +70,7 @@ module.exports = (DEBUG = true) => {
     });
 
     //------ run server
- 
+
     return mongo.init().then(async () => {
         const server = app.listen(config.port, function () {
             var host = (server.address().address || "").replace(/::/, 'localhost')
@@ -72,8 +79,8 @@ module.exports = (DEBUG = true) => {
             attention('[server]', 'for available routes call: http://localhost:5000/welcome')
         })
         return server
-    }).catch(err=>{
-        onerror('[mongo]','server did not start')
+    }).catch(err => {
+        onerror('[mongo]', 'server did not start')
     })
 }
 

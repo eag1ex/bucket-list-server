@@ -5,10 +5,10 @@
 * Mongoose connection
 * example usage `new MongoDB(true).init().then` > true/false
 *  */
-module.exports = function() {
+module.exports = function () {
     const CONFIG = require('../../config')
 
-    const { log, onerror, sq,attention } = require('x-utils-es/umd')
+    const { log, onerror, sq, attention } = require('x-utils-es/umd')
 
     const mongoose = require('mongoose')
     const { Subject } = require('rxjs')
@@ -44,7 +44,7 @@ module.exports = function() {
                 connectTimeoutMS: 30000,
                 // bufferMaxEntries :10,
                 // bufferCommands :true,
-                useUnifiedTopology:true,
+                useUnifiedTopology: true,
                 useNewUrlParser: true,
                 promiseLibrary: this.mongoose.Promise
             }
