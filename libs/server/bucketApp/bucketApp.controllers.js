@@ -1,7 +1,6 @@
-`use strict`
 module.exports = (mongo) => {
     const CONFIG = require('../../../config')
-    const { onerror, log, copy } = require('x-utils-es/umd')
+    const { onerror } = require('x-utils-es/umd')
     const { cleanOut, validID, validStatus } = require('../../utils')
     const messages = require('../../messages')
     const debug = true
@@ -18,8 +17,7 @@ module.exports = (mongo) => {
          * -  return all items in the bucket for current user
          */
         bucketList(req, res) {
-
-            let limit = 50 //NOTE lets just set a static limit for now!
+            let limit = 50 // NOTE lets just set a static limit for now!
 
             return db.listBuckets(limit)
                 .then(docs => docs.map(d => cleanOut(d)).filter(n => !n.error))
@@ -83,7 +81,6 @@ module.exports = (mongo) => {
         * - `example:  /bucket/:id/update-status`
         */
         updateBucketStatus(req, res) {
-
             const bucketID = req.params.id
             const body = req.body || {}
 
@@ -110,12 +107,11 @@ module.exports = (mongo) => {
         /**
          * - (POST) REST/api
          * - Create new subtask on current bucket
-         * - Only return successfully added subtask on the bucket 
+         * - Only return successfully added subtask on the bucket
          * - Accepting {title}
          * - `example:  /bucket/:id/rel/subtask/create`
          */
         createSubtask(req, res) {
-         
             /* REVIEW
               client app should NOT be creating `ids` if we are use a database, correct ?
               Mongo will generate an id for us and we will return it in a request.
@@ -147,9 +143,8 @@ module.exports = (mongo) => {
                     onerror('[createSubtask]', error)
                     return res.status(400).json({ ...messages['005'] })
                 })
-
         }
-        
+
         /**
         * - (POST) REST/api
         * - Update subtask on current bucket
@@ -160,9 +155,8 @@ module.exports = (mongo) => {
             /*
                 REVIEW
                 following the last comment @createSubtask
-                We can now retrieve our tod_id on an existing subtask from the client        
+                We can now retrieve our tod_id on an existing subtask from the client
             **/
-
 
             const subtaskID = req.params.todo_id
             const body = req.body || {}

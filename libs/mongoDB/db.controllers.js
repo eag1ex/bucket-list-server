@@ -3,8 +3,8 @@
  * @dbControllers
  * our mongo executes live here
  */
-function dbControllers(mongo,debug=false) {
-    const { onerror, log, attention, sq,copy } = require('x-utils-es/umd')
+function dbControllers(mongo, debug = false) {
+    const { onerror, log, sq, copy } = require('x-utils-es/umd')
     const { Bucket, Subtask } = require('./')
     const o = {}
 
@@ -22,32 +22,31 @@ function dbControllers(mongo,debug=false) {
      */
     o.createBucket = function(bucketData = {}) {
         return db.Bucket.create(bucketData).then(doc => {
-           if(debug) log('Bucket created', doc._id)
+            if (debug) log('Bucket created', doc._id)
             return doc
         })
     }
-    
-     /**
+
+    /**
      * @memberof Bucket
      * grub list of available buckets
-     * @param {*} limit 
+     * @param {*} limit
      * @returns [bucketDoc,...]
      */
-    o.listBuckets = function (limit = -1) {
+    o.listBuckets = function(limit = -1) {
         if (!limit) limit = null
         const defer = sq()
 
         // https://stackoverflow.com/questions/11512965/mongoose-sort-query-by-populated-field
         db.Bucket.find({})
-            .populate({path:'subtasks',select:'-__v'})
+            .populate({ path: 'subtasks', select: '-__v' })
             .select('-__v')
             .limit(limit).sort('updatedAt')
-            .exec(function (err, docList) {
+            .exec(function(err, docList) {
                 if (err) {
                     if (debug) onerror('[listBuckets]', err)
                     return defer.reject(err)
-                }
-                else {
+                } else {
                     if (debug) log('[listBuckets]', `size:${copy(docList).length}`)
                     defer.resolve(docList)
                 }
@@ -58,7 +57,7 @@ function dbControllers(mongo,debug=false) {
     /**
      * @memberof Bucket
      * Find and return Bucket with subtasks
-     * @param {*} bucketID 
+     * @param {*} bucketID
      */
     o.getBucket = (bucketID) => {
         return db.Bucket.findById(bucketID)
@@ -78,10 +77,10 @@ function dbControllers(mongo,debug=false) {
             ...(bucketData.status ? { status: bucketData.status } : {}),
             ...(bucketData.title ? { title: bucketData.title } : {})
         }, { new: true, useFindAndModify: false })
-        .then(doc=>{
-            log('Bucket updated', doc._id)
-            return doc
-        })
+            .then(doc => {
+                log('Bucket updated', doc._id)
+                return doc
+            })
     }
 
     /**
@@ -105,7 +104,7 @@ function dbControllers(mongo,debug=false) {
      */
     o.createSubtask = function(bucketID, subtaskData = {}) {
         return db.Subtask.create(subtaskData).then(async(subtaskDoc) => {
-            if(debug) log('Subtask created',subtaskDoc._id)
+            if (debug) log('Subtask created', subtaskDoc._id)
 
             const bucketDoc = db.Bucket.findByIdAndUpdate(
                 bucketID,
@@ -132,7 +131,7 @@ function dbControllers(mongo,debug=false) {
     /**
      * @memberof Subtask
      * Find and return subtask
-     * @param {*} subtaskID 
+     * @param {*} subtaskID
      */
     o.getSubtask = (subtaskID) => {
         return db.Subtask.findById(subtaskID)
@@ -151,7 +150,7 @@ function dbControllers(mongo,debug=false) {
             status: subtaskData.status
         }, { new: true, useFindAndModify: false }
         ).then(doc => {
-            if(debug)  log('Subtask updated',doc._id)
+            if (debug) log('Subtask updated', doc._id)
             return doc
         })
     }

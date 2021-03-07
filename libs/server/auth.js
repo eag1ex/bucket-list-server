@@ -3,7 +3,6 @@
  * - ServerAuth extention
  */
 module.exports = function(expressApp) {
-    const { log } = require('x-utils-es/umd')
     return class ServerAuth {
         constructor(debug) {
             this.debug = debug

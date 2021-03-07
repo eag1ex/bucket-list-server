@@ -1,5 +1,5 @@
-const { reduce, identity } = require('lodash')
-const { copy,log } = require('x-utils-es/umd')
+const { reduce } = require('lodash')
+const { copy, onerror } = require('x-utils-es/umd')
 
 exports.listRoutes = (stack, appNameRoute) => {
     return reduce(stack, (n, el, k) => {
@@ -20,34 +20,30 @@ exports.toJson = (data) => {
     }
 }
 
-
 /**
  * check if mongo _id is valid format
- * @param {*} id 
+ * @param {*} id
  */
 exports.validID = (id) => {
     try {
-        let rgx = new RegExp("^[0-9a-fA-F]{24}$")
+        let rgx = new RegExp('^[0-9a-fA-F]{24}$')
         return rgx.test(id)
     } catch (err) {
         return false
     }
 }
 
-exports.validStatus=(status='')=> ['pending','completed'].indexOf(status ||'')!==-1
-
-
+exports.validStatus = (status = '') => ['pending', 'completed'].indexOf(status || '') !== -1
 
 /**
  * - remove unwanted props from output
  * @param {*} o
  * @param {*} modelType bucket/subtask
  */
-exports.cleanOut = (o = {}, modelType='bucket') => {
+exports.cleanOut = (o = {}, modelType = 'bucket') => {
     try {
-
         o = copy(o)
-        
+
         if (!modelType || modelType === 'bucket') {
             delete o.__v
             // REVIEW  delete o.updatedAt just keep it for not
@@ -64,17 +60,16 @@ exports.cleanOut = (o = {}, modelType='bucket') => {
                     return n
                 })
             }
-        } else{
+        } else {
             delete o.__v
             // REVIEW  delete o.updatedAt just keep it for not
             o.todo_id = o._id
             delete o._id
         }
-    
 
         return o
     } catch (err) {
-        onerror('[cleanOut]',err)
+        onerror('[cleanOut]', err)
         return { error: 'output error' }
     }
 }
