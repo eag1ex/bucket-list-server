@@ -78,7 +78,8 @@ module.exports = (mongo) => {
 
         /**
         * (POST) REST/api
-        *  update {status}
+        * update {status}
+        * Accepting {status}
         * `example:  /bucket/:id/update-status`
         */
         updateBucketStatus(req, res) {
@@ -89,7 +90,7 @@ module.exports = (mongo) => {
             if (!validID(bucketID)) return res.status(400).json({ error: 'Not a valid {id}' })
             if (!validStatus(body.status || '')) return res.status(400).json({ error: 'Not a valid {status} provided' })
 
-            db.updateBucket(bucketID, { status: body.status })
+           return db.updateBucket(bucketID, { status: body.status })
                 .then((doc) => [cleanOut(doc)].filter(n => !n.error)[0])
                 .then(n => {
                     if (n) return n
@@ -108,31 +109,45 @@ module.exports = (mongo) => {
 
         /**
          * (POST) REST/api
-         * - Create new subtask on current bucket,
+         * Create new subtask on current bucket
+         * Only return successfully added subtask to the bucket 
+         * Accepting {title}
          * `example:  /bucket/:id/rel/subtask/create`
          */
         createSubtask(req, res) {
 
+            /* REVIEW
+              client app should NOT be creating `ids` if we are use a database, correct ?
+              Mongo will generate an id for us and we will return it in a request.
+              PS: It would be bit silly to have two different ids on a subtask model, correct?
+            * */
+
             const bucketID = req.params.id
-            
-            const subtaskData = req.body
-            if(!subtaskData.title || (subtaskData.title || '').length < 2){
-                return res.status(400).json({ error: 'missing title, or too short' })
+            const body = req.body
+
+            if (!validID(bucketID)) return res.status(400).json({ error: 'Not a valid {id}' })
+            if (!body.title || (body.title || '').length < 2) {
+                return res.status(400).json({ error: 'Missing {title}, or too short' })
             }
 
-           // db.createSubtask(bucketID,)
+            return db.createSubtask(bucketID, { title: body.title, status: 'pending' })
+                .then(({ subtaskDoc }) => db.getSubtask(subtaskDoc._id))
+                .then((doc) => [cleanOut(doc, 'subtask')].filter(n => !n.error)[0])
+                .then(n => {
+                    if (n) return n
+                    else return Promise.reject('cleanOut with no results')
+                })
+                .then(d => {
+                    return res.status(200).json({
+                        response: d,
+                        code: 200
+                    })
+                })
+                .catch(error => {
+                    onerror('[createSubtask]', error)
+                    return res.status(400).json({ ...messages['005'] })
+                })
 
-            /*
-                accepting:
-                ● title
-                ● todo_id
-            * */
-            // if (o.error) return res.status(200).json({ ...o });
-            return res.status(200).json({
-                params: req.params,
-                response: true,
-                code: 200
-            })
         }
 
         /**

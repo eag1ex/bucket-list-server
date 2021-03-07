@@ -57,6 +57,17 @@ function dbControllers(mongo,debug=false) {
 
     /**
      * @memberof Bucket
+     * Find and return Bucket with subtasks
+     * @param {*} bucketID 
+     */
+    o.getBucket = (bucketID) => {
+        return db.Bucket.findById(bucketID)
+            .populate({ path: 'subtasks', select: '-__v' })
+            .select('-__v')
+    }
+
+    /**
+     * @memberof Bucket
      * Updates existing Bucket
      * @param {*} bucketID `_id`
      * @param {*} bucketData data object, `{title,status}`
@@ -116,6 +127,16 @@ function dbControllers(mongo,debug=false) {
             let [bucketDoc, subtaskDoc] = Array.from(docs).values()
             return { bucketDoc, subtaskDoc }
         })
+    }
+
+    /**
+     * @memberof Subtask
+     * Find and return subtask
+     * @param {*} subtaskID 
+     */
+    o.getSubtask = (subtaskID) => {
+        return db.Subtask.findById(subtaskID)
+            .select('-__v')
     }
 
     /**
