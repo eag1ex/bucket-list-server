@@ -9,8 +9,9 @@ dist
 assets
 desktop.ini
 info.md
-libs/simple-order
 mongoDB.bat
+example.js
+
 # Docker
 Dockerfile
 docker-compose.yml

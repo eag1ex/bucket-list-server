@@ -1,25 +1,20 @@
 
-
 /**
 * @Mongo
 * Mongoose connection
 * example usage `new MongoDB(true).init().then` > true/false
 *  */
-module.exports = function () {
+module.exports = function() {
     const CONFIG = require('../../config')
     const { log, onerror, sq, attention } = require('x-utils-es/umd')
     const mongoose = require('mongoose')
     const { Subject } = require('rxjs')
 
-
     return class MongoDB {
-
         constructor(debug = false) {
-
             this.debug = debug
             this.presets() // mongoose presets
             this.connectionStatus() // .onReady
-
         }
 
         presets() {
@@ -31,9 +26,9 @@ module.exports = function () {
 
         get options() {
             return {
-                // "loggerLevel": "info", 
+                // "loggerLevel": "info",
                 // ssl: CONFIG.mongo.remote ? true:false,
-                sslValidate: CONFIG.mongo.remote ? true : false,
+                sslValidate: !!CONFIG.mongo.remote,
                 poolSize: 30,
                 mongos: true,
                 // useMongoClient: true,
@@ -59,13 +54,11 @@ module.exports = function () {
             return Promise.reject()
         }
 
-
         connectionStatus() {
             if (this.conSubscribed) return this
 
             this.connectionStatus = new Subject()
             this.conSubscribed = this.connectionStatus.subscribe(v => {
-
                 if (v.connect) attention('[mongo][status]', 'CONNECTED')
                 if (v.open) attention('[mongo][status]', 'CONNECTION_OPENED')
 
@@ -81,9 +74,7 @@ module.exports = function () {
             return this
         }
 
-
         connect() {
-
             if (this.connectionSet) return this
 
             this.connectionSet = this.mongoose.connect(this.DATABASE, this.options).then(e => {
@@ -108,4 +99,3 @@ module.exports = function () {
         }
     }
 }
-

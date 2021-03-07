@@ -15,9 +15,7 @@
         "javascript",
         "javascriptreact"
     ],
-    "eslint.options": {
-        "configFile": "eslintrc.json"
-    },
+
     "eslint.format.enable": true,
     "eslint.probe": [
         "javascript",
