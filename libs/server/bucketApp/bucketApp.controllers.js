@@ -2,10 +2,10 @@
 module.exports = (mongo) => {
     const CONFIG = require('../../../config')
     const { onerror, log, copy } = require('x-utils-es/umd')
-    const { cleanOut,validID,validStatus } = require('../../utils')
+    const { cleanOut, validID, validStatus } = require('../../utils')
     const messages = require('../../messages')
     const debug = true
-    const db = require('../../mongoDB').dbControllers(mongo,debug)
+    const db = require('../../mongoDB').dbControllers(mongo, debug)
 
     class ServerController {
         constructor(opts, debug) {
@@ -13,9 +13,9 @@ module.exports = (mongo) => {
         }
 
         /**
-         * (GET) REST/api
-         * `example:  /bucket/list`
-         * @returns all items in the bucket for current user
+         * - (GET) REST/api
+         * - `example:  /bucket/list`
+         * -  return all items in the bucket for current user
          */
         bucketList(req, res) {
 
@@ -28,21 +28,21 @@ module.exports = (mongo) => {
                     else return Promise.reject('cleanOut with no results')
                 })
                 .then(d => {
-                   return res.status(200).json({
+                    return res.status(200).json({
                         response: d,
                         code: 200
                     })
                 })
                 .catch(err => {
-                    onerror('[bucketList]',err)
+                    onerror('[bucketList]', err)
                     return res.status(400).json({ ...messages['003'] })
                 })
         }
 
         /**
-         * (POST) REST/api => /bucket/create
-         * create new bucket
-         * accepting: {title}
+         * - (POST) REST/api => /bucket/create
+         * - Create new bucket
+         * - Accepting: {title}
          */
         createBucket(req, res) {
             const body = req.body || {}
@@ -50,7 +50,7 @@ module.exports = (mongo) => {
             if (!body.title || (body.title || '').length < 2) {
                 return res.status(400).json({ error: 'missing title, or too short' })
             }
-           
+
             const bucketData = {
                 // NOTE assing static user to each request for now
                 user: { name: CONFIG.mongo.defaultUser },
@@ -60,8 +60,8 @@ module.exports = (mongo) => {
 
             return db.createBucket(bucketData)
                 .then((doc) => [cleanOut(doc)].filter(n => !n.error)[0])
-                .then(n=>{
-                    if(n) return n
+                .then(n => {
+                    if (n) return n
                     else return Promise.reject('cleanOut with no results')
                 })
                 .then(d => {
@@ -77,10 +77,10 @@ module.exports = (mongo) => {
         }
 
         /**
-        * (POST) REST/api
-        * update {status}
-        * Accepting {status}
-        * `example:  /bucket/:id/update-status`
+        * - (POST) REST/api
+        * - update {status}
+        * - Accepting {status}
+        * - `example:  /bucket/:id/update-status`
         */
         updateBucketStatus(req, res) {
 
@@ -90,7 +90,7 @@ module.exports = (mongo) => {
             if (!validID(bucketID)) return res.status(400).json({ error: 'Not a valid {id}' })
             if (!validStatus(body.status || '')) return res.status(400).json({ error: 'Not a valid {status} provided' })
 
-           return db.updateBucket(bucketID, { status: body.status })
+            return db.updateBucket(bucketID, { status: body.status })
                 .then((doc) => [cleanOut(doc)].filter(n => !n.error)[0])
                 .then(n => {
                     if (n) return n
@@ -108,19 +108,19 @@ module.exports = (mongo) => {
         }
 
         /**
-         * (POST) REST/api
-         * Create new subtask on current bucket
-         * Only return successfully added subtask to the bucket 
-         * Accepting {title}
-         * `example:  /bucket/:id/rel/subtask/create`
+         * - (POST) REST/api
+         * - Create new subtask on current bucket
+         * - Only return successfully added subtask on the bucket 
+         * - Accepting {title}
+         * - `example:  /bucket/:id/rel/subtask/create`
          */
         createSubtask(req, res) {
-
+         
             /* REVIEW
               client app should NOT be creating `ids` if we are use a database, correct ?
               Mongo will generate an id for us and we will return it in a request.
               PS: It would be bit silly to have two different ids on a subtask model, correct?
-            * */
+            **/
 
             const bucketID = req.params.id
             const body = req.body
@@ -149,24 +149,42 @@ module.exports = (mongo) => {
                 })
 
         }
-
+        
         /**
-        * (POST) REST/api
+        * - (POST) REST/api
         * - Update subtask on current bucket
-        * `example: /bucket/:id/rel/subtask/:todo_id/update-status`
-        * @returns updated status for selected subtask
+        * - `example: /bucket/rel/subtask/:todo_id/update-status`
+        * - Accepting {status}
         */
         updateSubtaskStatus(req, res) {
             /*
-                accepting:
-                ● status
-            * */
-            // if (o.error) return res.status(200).json({ ...o });
-            return res.status(200).json({
-                params: req.params,
-                response: true,
-                code: 200
-            })
+                REVIEW
+                following the last comment @createSubtask
+                We can now retrieve our tod_id on an existing subtask from the client        
+            **/
+
+
+            const subtaskID = req.params.todo_id
+            const body = req.body || {}
+
+            if (!validID(subtaskID)) return res.status(400).json({ error: 'Not a valid {todo_id}' })
+            if (!validStatus(body.status || '')) return res.status(400).json({ error: 'Not a valid {status} provided' })
+
+            return db.updateSubtask(subtaskID, { status: body.status })
+                .then((doc) => [cleanOut(doc, 'subtask')].filter(n => !n.error)[0])
+                .then(n => {
+                    if (n) return n
+                    else return Promise.reject('cleanOut with no results')
+                })
+                .then(d => {
+                    return res.status(200).json({
+                        response: d,
+                        code: 200
+                    })
+                }).catch(error => {
+                    onerror('[updateSubtaskStatus]', error)
+                    return res.status(400).json({ ...messages['006'] })
+                })
         }
     }
     return ServerController

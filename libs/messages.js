@@ -11,5 +11,6 @@ module.exports = onMessages({
     '002': ['Issue with createing new bucket', '002'], // createBucket
     '003':['No Results for Bucket','003'], // bucketList
     '004':['Bucket not updated','004'], // updateBucketStatus
-    '005':['Subtask not created','005'] // createSubtask
+    '005':['Subtask not created','005'], // createSubtask
+    '006':['Subtask not updated','006'] // updateSubtaskStatus
 })
