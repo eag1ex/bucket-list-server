@@ -10,17 +10,22 @@ class Bucket {
 
     constructor() {
         this.model = this.$ = null
-        this.create()
+        this.make()
     }
+    // TODO MERGE subtasks schema into Bucket
+    // https://stackoverflow.com/questions/54084206/importing-a-custom-mongoose-schema-in-another-schema
+    make(name = "Bucket") {
 
-    create(name = "Bucket") {
-
-        const Schema = new mongoose.Schema(
+       const Model = mongoose.model(name, new mongoose.Schema(
             {
+                user:{
+                    name:{type:String,  required: true,  validate: [validate.alphanumeric, 'Invalid user/name']},                  
+                   // password:{type:String} // this would be a salt
+                },
+                
                 title: {
                     type: String,
-                    required: true,
-                    validate: [validate.alphanumeric, 'Invalid title']
+                    required: true
                 },
 
                 // [pending,completed]
@@ -29,24 +34,21 @@ class Bucket {
                     required: true,
                     validate: [validate.alpha, 'Invalid status']
                 },
-                subtasks:{
-                    type:Array,
-                    required: true,
-                }
+
+                // NOTE referencing our Subtasks Model     
+                subtasks:[{
+                        type: mongoose.Schema.Types.ObjectId,
+                        ref: "Subtask"
+                    }]
             },
             { timestamps: { createdAt: 'created_at' } }
-            )
-
-        // Schema.set('autoIndex', false)
-        // Schema.set('versionKey', false)
-
-        const Model = mongoose.model(name, Schema);
+            ));
+   
 
         // this.statics(Model)   
 
         this.validators(Model,name)
-        this.model = Model
-        this.$ = this.model   
+        this.model = this.$ = Model
         return this
     }
 

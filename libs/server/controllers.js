@@ -1,7 +1,7 @@
 `use strict`
 const { Bucket, Subtask } = require('../mongoDB')
 const { onerror,log,copy } = require('x-utils-es/umd')
-const {toJson,cleanOut} = require('../utils')
+const {cleanOut} = require('../utils')
 const messages = require('../messages')
 class ControllerLibs {
 
@@ -142,6 +142,7 @@ class ControllerLibs {
      * @returns newlly created subtask
      */
     createSubtask(req, res) {
+        
         /*
             accepting:
             ● title

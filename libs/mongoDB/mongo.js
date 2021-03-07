@@ -7,9 +7,7 @@
 *  */
 module.exports = function () {
     const CONFIG = require('../../config')
-
     const { log, onerror, sq, attention } = require('x-utils-es/umd')
-
     const mongoose = require('mongoose')
     const { Subject } = require('rxjs')
 

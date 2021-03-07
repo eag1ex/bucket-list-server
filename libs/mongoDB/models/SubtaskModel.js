@@ -11,17 +11,16 @@ class Subtask {
 
     constructor() {
         this.model = this.$ = null
-        this.create()
+        this.make()
     }
 
-    create(name = "Subtask") {
+    make(name = "Subtask") {
 
-        const Schema = new mongoose.Schema(
+       const Model =  mongoose.model(name, new mongoose.Schema(
             {
                 title: {
                     type: String,
-                    required: true,
-                    validate: [validate.alphanumeric, 'Invalid title']
+                    required: true
                 },
 
                 // [pending,completed]
@@ -32,18 +31,13 @@ class Subtask {
                 }
             },
             { timestamps: { createdAt: 'created_at' } }
-            )
-            
-        // Schema.set('autoIndex', false)
-        // Schema.set('versionKey', false)
-
-        const Model = mongoose.model(name, Schema);
+            ));
 
         // this.statics(Model)   
         this.validators(Model,name)
 
-        this.model = Model
-        this.$ = this.model
+        this.model =  this.$ = Model
+
         return this
     }
 

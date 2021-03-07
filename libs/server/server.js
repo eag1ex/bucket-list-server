@@ -29,7 +29,7 @@ module.exports = (DEBUG = true) => {
 
 
     // ------------ init mongo DB
-    const MongoDB = require('../mongoDB').MongoDB()
+    const MongoDB = require('../mongoDB').mongoDB()
     // initialise and wait for init to resolve
     const mongo = new MongoDB(DEBUG)
 

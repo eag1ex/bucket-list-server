@@ -6,6 +6,7 @@
   "scripts": {
     "start": "node ./index",
     "server": "node ./index",
+    "populate":"node ./mongo.populate.js",
     "test": "nyc --reporter=html --port=2222 --reporter=text mocha"
   },
   "author": "eaglex.net",
