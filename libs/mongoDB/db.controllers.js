@@ -21,10 +21,7 @@ function dbControllers(mongo, debug = false) {
      * @returns bucketDoc
      */
     o.createBucket = function(bucketData = {}) {
-        return db.Bucket.create(bucketData).then(doc => {
-            if (debug) log('Bucket created', doc._id)
-            return doc
-        })
+        return db.Bucket.create(bucketData)
     }
 
     /**
@@ -34,24 +31,11 @@ function dbControllers(mongo, debug = false) {
      * @returns [bucketDoc,...]
      */
     o.listBuckets = function(limit = -1) {
-        if (!limit) limit = null
-        const defer = sq()
-
-        // https://stackoverflow.com/questions/11512965/mongoose-sort-query-by-populated-field
-        db.Bucket.find({})
+     
+        return db.Bucket.find({})
             .populate({ path: 'subtasks', select: '-__v' })
             .select('-__v')
             .limit(limit).sort('updatedAt')
-            .exec(function(err, docList) {
-                if (err) {
-                    if (debug) onerror('[listBuckets]', err)
-                    return defer.reject(err)
-                } else {
-                    if (debug) log('[listBuckets]', `size:${copy(docList).length}`)
-                    defer.resolve(docList)
-                }
-            })
-        return defer.promise
     }
 
     /**
@@ -89,7 +73,7 @@ function dbControllers(mongo, debug = false) {
      * @param {*} id `_id`
      * @returns bucketDoc
      */
-    o.bucketWithPopulate = function(id) {
+    o.bucketWithTasks = (id)=> {
         return db.Bucket.findById(id)
             .populate('subtasks', '-_id -__v') // adds subtasks from by ref, excluding _id,__v
             .select('-__v') // exclude from Bucket in the results
@@ -102,9 +86,8 @@ function dbControllers(mongo, debug = false) {
      * @param {*} subtaskData data object `{title,status}`
      * @returns {*} `{bucketDoc,subtaskDoc}`
      */
-    o.createSubtask = function(bucketID, subtaskData = {}) {
+    o.createSubtask = (bucketID, subtaskData = {}) =>{
         return db.Subtask.create(subtaskData).then(async(subtaskDoc) => {
-            if (debug) log('Subtask created', subtaskDoc._id)
 
             const bucketDoc = db.Bucket.findByIdAndUpdate(
                 bucketID,
@@ -113,9 +96,8 @@ function dbControllers(mongo, debug = false) {
                         subtasks: {
                             _id: subtaskDoc._id,
                             title: subtaskDoc.title,
-                            status: subtaskDoc.status
-                            // created_at: subtaskDoc.created_at,
-                            // updatedAt: subtaskDoc.updatedAt
+                            status: subtaskDoc.status,
+                            user: { name: subtaskDoc.user.name }
                         }
                     }
                 },
@@ -145,15 +127,49 @@ function dbControllers(mongo, debug = false) {
      * @param {*} subtaskData
      * @returns subtaskDoc
      */
-    o.updateSubtask = function(subtaskID, subtaskData = {}) {
+    o.updateSubtask = (subtaskID, subtaskData = {})=> {
         return db.Subtask.findByIdAndUpdate(subtaskID, {
             status: subtaskData.status
-        }, { new: true, useFindAndModify: false }
-        ).then(doc => {
-            if (debug) log('Subtask updated', doc._id)
-            return doc
-        })
+        }, { new: true, useFindAndModify: false })
     }
+
+    o.removeBucketWithSubtask = async (bucketID) => {
+
+        try {
+            const doc = await db.Bucket.findById(bucketID)
+            if (!doc) return {}
+
+            const ids = doc.subtasks || []
+            if (ids.length) await db.Subtask.deleteMany({ _id: { $in: ids } })
+            return await { deleted: doc.delete() }
+        } catch (err) {
+            return Promise.reject(err)
+        }
+    }
+
+    o.removeSubtasks =  (ids=[])=> {
+        return db.Subtask.deleteMany({ _id: { $in: ids } })
+    }
+
+    o.removeBuckets =  (ids=[])=> {
+        return db.Bucket.deleteMany({ _id: { $in: ids } })
+    }
+
+    /**
+     * @memberof Bucket/Subtask
+     * remove all data from Bucket and Subtask models
+     */
+    o.purgeDB = async () => {
+        try {
+            const subtasks = await db.Subtask.deleteMany({})
+            const buckets = await db.Bucket.deleteMany({})
+            return { buckets, subtasks }
+        } catch (err) {
+            return Promise.reject(err)
+        }
+    }   
+
+
 
     return o
 }

@@ -5,12 +5,7 @@ module.exports = (mongo, bucketRouter, DEBUG) => {
     const ServerCtrs = require('./bucketApp.controllers')(mongo)
 
     // -------- Initialize our controllers
-
-    const opts = {
-        // ...
-    }
-
-    const controllers = new ServerCtrs(opts, DEBUG)
+    const controllers = new ServerCtrs({}, DEBUG)
 
     bucketRouter.use(function timeLog(req, res, next) {
         log('Time: ', Date.now())
@@ -25,7 +20,7 @@ module.exports = (mongo, bucketRouter, DEBUG) => {
     bucketRouter.post('/rel/subtask/:todo_id/update-status', controllers.updateSubtaskStatus.bind(controllers))
 
     // catch all other routes
-    bucketRouter.all('*', function(req, res) {
+    bucketRouter.all('*', function (req, res) {
         res.status(400).json({ ...messages['001'], error: true })
     })
 }
