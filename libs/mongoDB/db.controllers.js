@@ -4,7 +4,7 @@
  * our mongo executes live here
  */
 function dbControllers(mongo, debug = false) {
-    const { onerror, log, sq, copy } = require('x-utils-es/umd')
+    const { onerror, log, sq, copy,warn } = require('x-utils-es/umd')
     const { Bucket, Subtask } = require('./')
     const o = {}
 
@@ -20,9 +20,42 @@ function dbControllers(mongo, debug = false) {
      * @param {*} bucketData data object, `{title,status}`
      * @returns bucketDoc
      */
-    o.createBucket = function(bucketData = {}) {
+    const createBucket = function(bucketData = {}) {
         return db.Bucket.create(bucketData)
     }
+       /**
+     * @memberof Subtask/Bucket
+     * Create new initial Subtask belonging to Bucket
+     * @param {*} bucketID `_id`
+     * @param {*} subtaskData data object `{title,status}`
+     * @returns {*} `{bucketDoc,subtaskDoc}`
+     */
+     const createSubtask = (bucketID, subtaskData = {}) =>{
+        return db.Subtask.create(subtaskData).then(async(subtaskDoc) => {
+
+            const bucketDoc = db.Bucket.findByIdAndUpdate(
+                bucketID,
+                {
+                    $push: {
+                        subtasks: {
+                            _id: subtaskDoc._id,
+                            title: subtaskDoc.title,
+                            status: subtaskDoc.status,
+                            user: { name: subtaskDoc.user.name }
+                        }
+                    }
+                },
+                { new: true, useFindAndModify: false }
+            )
+            return Promise.all([bucketDoc, Promise.resolve(subtaskDoc)])
+        }).then(docs => {
+            let [bucketDoc, subtaskDoc] = Array.from(docs).values()
+            return { bucketDoc, subtaskDoc }
+        })
+    }
+
+
+    o.createBucket = createBucket
 
     /**
      * @memberof Bucket
@@ -30,8 +63,8 @@ function dbControllers(mongo, debug = false) {
      * @param {*} limit
      * @returns [bucketDoc,...]
      */
-    o.listBuckets = function(limit = -1) {
-     
+    o.listBuckets = function(limit = 1) {
+
         return db.Bucket.find({})
             .populate({ path: 'subtasks', select: '-__v' })
             .select('-__v')
@@ -79,36 +112,9 @@ function dbControllers(mongo, debug = false) {
             .select('-__v') // exclude from Bucket in the results
     }
 
-    /**
-     * @memberof Subtask/Bucket
-     * Create new initial Subtask belonging to Bucket
-     * @param {*} bucketID `_id`
-     * @param {*} subtaskData data object `{title,status}`
-     * @returns {*} `{bucketDoc,subtaskDoc}`
-     */
-    o.createSubtask = (bucketID, subtaskData = {}) =>{
-        return db.Subtask.create(subtaskData).then(async(subtaskDoc) => {
+ 
+    o.createSubtask = createSubtask
 
-            const bucketDoc = db.Bucket.findByIdAndUpdate(
-                bucketID,
-                {
-                    $push: {
-                        subtasks: {
-                            _id: subtaskDoc._id,
-                            title: subtaskDoc.title,
-                            status: subtaskDoc.status,
-                            user: { name: subtaskDoc.user.name }
-                        }
-                    }
-                },
-                { new: true, useFindAndModify: false }
-            )
-            return Promise.all([bucketDoc, Promise.resolve(subtaskDoc)])
-        }).then(docs => {
-            let [bucketDoc, subtaskDoc] = Array.from(docs).values()
-            return { bucketDoc, subtaskDoc }
-        })
-    }
 
     /**
      * @memberof Subtask
@@ -167,7 +173,69 @@ function dbControllers(mongo, debug = false) {
         } catch (err) {
             return Promise.reject(err)
         }
-    }   
+    } 
+
+    /**
+     * Our custom collection insert of buckets with subtasks using bucketList[] data
+     * @param {*} bucketList  array of buckets with subtasks, `[{title,status,subtasks[]},...]`
+     */
+    o.bucketCollectionInsert = async (bucketList = [], defaultUser={}) => {
+
+        if(!bucketList||[].length){
+            return Promise.reject('bucketList is empty check your ./data.inserts.js')
+        }
+
+        if(!defaultUser){
+            return Promise.reject('defaultUser not set!')
+        }
+        
+        // REVIEW db.Bucket.collection.insertMany(bucketList) // WILL look into it
+        let bucIndex = 0
+        for (let bucketItem of bucketList) {
+            try {
+
+                if(!bucketItem.title || !bucketItem.status){
+                    warn('[bucket]',`missing title/status at bucIndex: ${bucIndex}` )
+                    continue
+                }
+
+                let subtasks = copy(bucketItem.subtasks) || []
+                delete bucketItem.subtasks
+                // just in case
+                delete bucketItem.created_at
+                delete bucketItem.id
+               // log('add ?',{...bucketItem,...defaultUser})
+
+                let bucDoc = await createBucket({...bucketItem,...defaultUser})
+                log('[bucket][created]', bucDoc._id)
+
+                for (let sub of subtasks) {
+                    let user = { user: { name: bucDoc.user.name } }
+
+                    if(!sub.title || !sub.status){
+                        warn('[bucket][subtask]',`missing title/status at bucIndex: ${bucIndex}` )
+                        break
+                    }
+                    // just in case
+                    delete sub.created_at
+                    delete sub.todo_id // _id is is generated by mongo  
+                    const {subtaskDoc} = await createSubtask(bucDoc._id, { ...sub, ...user })
+                    log('[bucket][subtask][created]', subtaskDoc._id)
+                }
+                bucIndex++
+
+            } catch (err) {
+                onerror('[bucketCollectionInsert]', err)
+                continue
+            }
+        }
+
+        if (!bucIndex) {
+            return Promise.reject('no buckets created')
+        }
+        return { created: true, index: bucIndex }
+    }
+    
 
 
 
