@@ -3,10 +3,11 @@
  */
 
 const { mongoDB, dbControllers, Bucket, Subtask } = require('./libs/mongoDB')
-const { onerror, log, debug, attention } = require('x-utils-es/umd');
+const { onerror, log, attention } = require('x-utils-es/umd');
 const dataInsert = require('./data.inserts')
 
 const populate = async () => {
+    
     const MongoDB = mongoDB()
     const mongo = new MongoDB(true)
     await mongo.init()

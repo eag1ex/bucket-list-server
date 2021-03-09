@@ -126,7 +126,10 @@ module.exports = (mongo) => {
                 return res.status(400).json({ error: 'Missing {title}, or too short' })
             }
 
-            return db.createSubtask(bucketID, { title: body.title, status: 'pending' })
+            return db.createSubtask(bucketID, {
+                user: { name: CONFIG.mongo.defaultUser },
+                title: body.title,
+                status: 'pending' })
                 .then(({ subtaskDoc }) => db.getSubtask(subtaskDoc._id))
                 .then((doc) => [cleanOut(doc, 'subtask')].filter(n => !n.error)[0])
                 .then(n => {

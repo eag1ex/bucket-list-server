@@ -74,5 +74,6 @@ module.exports = (DEBUG = true) => {
         return server
     }).catch(err => {
         onerror('[mongo]', 'server did not start')
+        log('[mongo]', 'make sure your database is running!')
     })
 }

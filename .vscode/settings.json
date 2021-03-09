@@ -152,5 +152,4 @@
     },
     "tslint.enable": false,
     "tslint.jsEnable": false,
-    "scss.validate":true
 }
