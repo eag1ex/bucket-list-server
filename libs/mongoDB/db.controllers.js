@@ -47,7 +47,15 @@ function dbControllers(mongo, debug = false) {
                     }
                 },
                 { new: true, useFindAndModify: false }
-            )
+            ).then(doc => {
+                // make sure every time we add new subtask the bucket become pending
+                if (doc.status !== 'pending') {
+                    log('updating Bucket to status:pending')
+                }
+
+                return doc.update({ status: 'pending' })
+            })
+
             return Promise.all([bucketDoc, Promise.resolve(subtaskDoc)])
         }).then(docs => {
             let [bucketDoc, subtaskDoc] = Array.from(docs).values()
@@ -66,6 +74,12 @@ function dbControllers(mongo, debug = false) {
         return db.Subtask.findByIdAndUpdate(subtaskID, {
             status: subtaskData.status
         }, { new: true, useFindAndModify: false })
+            .then(doc => {
+                if (!doc) {
+                    return Promise.reject(`nothing updated for subtaskID:${subtaskID}`)
+                }
+                return doc
+            })
     }
 
     o.createBucket = createBucket
@@ -79,9 +93,9 @@ function dbControllers(mongo, debug = false) {
      */
     o.listBuckets = function(limit = 1) {
         return db.Bucket.find({})
-            .populate({ path: 'subtasks', select: '-__v' })
-            .select('-__v')
-            .limit(limit).sort('updatedAt')
+            .populate({ path: 'subtasks', select: '-__v -updatedAt' })
+            .select('-__v -updatedAt')
+            .limit(limit).sort('created_at')
     }
 
     /**
@@ -91,8 +105,14 @@ function dbControllers(mongo, debug = false) {
      */
     o.getBucket = (bucketID) => {
         return db.Bucket.findById(bucketID)
-            .populate({ path: 'subtasks', select: '-__v' })
-            .select('-__v')
+            .populate({ path: 'subtasks', select: '-__v -updatedAt' })
+            .select('-__v -updatedAt')
+            .then(doc => {
+                if (!doc) {
+                    return Promise.reject(`nothing updated for bucketID:${bucketID}`)
+                }
+                return doc
+            })
     }
 
     /**
@@ -107,8 +127,8 @@ function dbControllers(mongo, debug = false) {
             ...(bucketData.status ? { status: bucketData.status } : {}),
             ...(bucketData.title ? { title: bucketData.title } : {})
         }, { new: true, useFindAndModify: false })
-            .populate({ path: 'subtasks', select: '-__v' })
-            .select('-__v')
+            .populate({ path: 'subtasks', select: '-__v -updatedAt' })
+            .select('-__v -updatedAt')
             .then(doc => {
                 if (!doc) {
                     return Promise.reject(`nothing updated for bucketID:${bucketID}`)
@@ -126,15 +146,39 @@ function dbControllers(mongo, debug = false) {
     }
 
     /**
+     * Update bucket only without subtasks
+     * @param {*} bucketID
+     * @param {*} bucketData
+     */
+    o.updateBucketOnly = function(bucketID, bucketData = {}) {
+        return db.Bucket.findByIdAndUpdate(bucketID, {
+            ...(bucketData.status ? { status: bucketData.status } : {}),
+            ...(bucketData.title ? { title: bucketData.title } : {})
+        }, { new: true, useFindAndModify: false })
+            .select('-__v -updatedAt -subtasks')
+            .then(doc => {
+                if (!doc) {
+                    return Promise.reject(`nothing updated for bucketID:${bucketID}`)
+                } else return doc
+            })
+    }
+
+    /**
      * @memberof Bucket
      * selects subtasks for this bucket in the output
-     * @param {*} id `_id`
+     * @param {*} bucketID `_id`
      * @returns bucketDoc
      */
-    o.bucketWithTasks = (id) => {
-        return db.Bucket.findById(id)
-            .populate('subtasks', '-_id -__v') // adds subtasks from by ref, excluding _id,__v
-            .select('-__v') // exclude from Bucket in the results
+    o.bucketWithTasks = (bucketID) => {
+        return db.Bucket.findById(bucketID)
+            .populate('subtasks', '-_id -__v -updatedAt') // adds subtasks from by ref, excluding _id,__v
+            .select('-__v -updatedAt') // exclude from Bucket in the results
+            .then(doc => {
+                if (!doc) {
+                    return Promise.reject(`nothing updated for bucketID:${bucketID}`)
+                }
+                return doc
+            })
     }
 
     o.createSubtask = createSubtask
@@ -146,7 +190,13 @@ function dbControllers(mongo, debug = false) {
      */
     o.getSubtask = (subtaskID) => {
         return db.Subtask.findById(subtaskID)
-            .select('-__v')
+            .select('-__v -updatedAt')
+            .then(doc => {
+                if (!doc) {
+                    return Promise.reject(`nothing updated for subtaskID:${subtaskID}`)
+                }
+                return doc
+            })
     }
 
     o.removeBucketWithSubtask = async(bucketID) => {

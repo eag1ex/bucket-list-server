@@ -1,5 +1,5 @@
 const { reduce } = require('lodash')
-const { copy, onerror } = require('x-utils-es/umd')
+const { copy, onerror, isEmpty } = require('x-utils-es/umd')
 
 exports.listRoutes = (stack, appNameRoute) => {
     return reduce(stack, (n, el, k) => {
@@ -43,6 +43,7 @@ exports.validStatus = (status = '') => ['pending', 'completed'].indexOf(status |
 exports.cleanOut = (o = {}, modelType = 'bucket') => {
     try {
         o = copy(o)
+        if (isEmpty(o)) return {}
 
         if (!modelType || modelType === 'bucket') {
             delete o.__v

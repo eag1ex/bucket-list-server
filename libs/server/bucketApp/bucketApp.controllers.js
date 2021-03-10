@@ -22,8 +22,8 @@ module.exports = (mongo) => {
             return db.listBuckets(limit)
                 .then(docs => docs.map(d => cleanOut(d)).filter(n => !n.error))
                 .then(n => {
-                    if (n.length) return n
-                    else return Promise.reject('cleanOut with no results')
+                    if (!n.length) return []
+                    else return n
                 })
                 .then(d => {
                     return res.status(200).json({
@@ -71,6 +71,36 @@ module.exports = (mongo) => {
                 .catch(error => {
                     onerror('[createBucket]', error)
                     return res.status(400).json({ ...messages['002'] })
+                })
+        }
+
+        /**
+        * - (POST) REST/api
+        * - update {status}
+        * - Accepting {status}
+        * - `example:  /bucket/:id/bucket-only-update-status`
+        */
+        updateBucketOnly(req, res) {
+            const bucketID = req.params.id
+            const body = req.body || {}
+
+            if (!validID(bucketID)) return res.status(400).json({ error: 'Not a valid {id}' })
+            if (!validStatus(body.status || '')) return res.status(400).json({ error: 'Not a valid {status} provided' })
+
+            return db.updateBucketOnly(bucketID, { status: body.status })
+                .then((doc) => [cleanOut(doc)].filter(n => !n.error)[0])
+                .then(n => {
+                    if (n) return n
+                    else return Promise.reject('cleanOut with no results')
+                })
+                .then(d => {
+                    return res.status(200).json({
+                        response: d,
+                        code: 200
+                    })
+                }).catch(error => {
+                    onerror('[updateBucketOnly]', error)
+                    return res.status(400).json({ ...messages['004'] })
                 })
         }
 
