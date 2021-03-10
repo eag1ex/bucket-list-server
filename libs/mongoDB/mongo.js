@@ -4,7 +4,7 @@
 * Mongoose connection
 * example usage `new MongoDB(true).init().then` > true/false
 *  */
-module.exports = function () {
+module.exports = function() {
     const CONFIG = require('../../config')
     const { onerror, sq, attention } = require('x-utils-es/umd')
     const mongoose = require('mongoose')

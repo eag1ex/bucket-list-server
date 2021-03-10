@@ -1,7 +1,7 @@
 
 const validate = require('mongoose-validate')
 const mongoose = require('mongoose')
-const { log} = require('x-utils-es/umd')
+const { log } = require('x-utils-es/umd')
 
 /*
 Bucket class
@@ -42,20 +42,20 @@ class Bucket {
             { timestamps: { createdAt: 'created_at' } }
         )
 
-        schema.post('save',function(doc){
-            log('[bucket][saved]',doc._id)       
+        schema.post('save', function(doc) {
+            log('[bucket][saved]', doc._id)
         })
 
-        schema.post('updateOne',function(doc){
-            log('[bucket][updated]',doc._id)     
-        })   
-
-        schema.post('deleteOne',function(doc){  
-            log('[bucket][removed]',doc._id)  
+        schema.post('updateOne', function(doc) {
+            log('[bucket][updated]', doc._id)
         })
 
-        schema.post('remove',function(doc){
-            log('[bucket][removed]',doc._id)       
+        schema.post('deleteOne', function(doc) {
+            log('[bucket][removed]', doc._id)
+        })
+
+        schema.post('remove', function(doc) {
+            log('[bucket][removed]', doc._id)
         })
 
         const Model = mongoose.model(name, schema)
@@ -69,11 +69,11 @@ class Bucket {
     }
 
     validators(Model, name) {
-        Model.schema.path('status').validate(function (value) {
+        Model.schema.path('status').validate(function(value) {
             return ['pending', 'completed'].indexOf(value) !== -1
         }, `Invalid status, refer to ${name} Schema`)
 
-        Model.schema.path('title').validate(function (value) {
+        Model.schema.path('title').validate(function(value) {
             return value.length > 1
         }, `Invalid title, refer to ${name} Schema`)
     }
