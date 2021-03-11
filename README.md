@@ -2,18 +2,12 @@
 ### Bucket List Server
 #### - [ Developed by Eaglex ](http://eaglex.net)
 
-##### LICENSE
-
-* LICENCE: CC BY-NC-ND
-* SOURCE: https://creativecommons.org/licenses/by-nc-nd/4.0/legalcode
-
 
 #### About
 Full Rest API Express.js server with Mongoose/mongoDB integration, backend API implementation for Bucket List client app. 
-- Mongoose DB One To Many (Many)
-- Good Server and database separation
-- Implemented Error codes  
-
+* Mongoose DB One To Many (Many)
+* Good Server and database separation
+* Implemented Error codes  
 
 
 #### Installation
@@ -45,6 +39,7 @@ Server starts on `port:5000`
 
 * APIs
   - controllers for bucketApp located in : `./libs/server/bucketApp/*`
+  
   ```sh
 
     (GET)  http://localhost:5000/bucket/list
@@ -59,17 +54,23 @@ Server starts on `port:5000`
 * Express server runs the mini app for bucketApp routing to `/bucket`
 
 
+#### Stack
+Application stack: Express.js, Mongoose.js, MongoDB, REST/API, Javascript, LINT
+
 
 #### Tests
 * For now there are no coverage and tests optimized, i will get around to it.
 
 
-
 #### Code Hierarchy
-* Mongoose
-  > connection 
-* Server
-    > bucketApp > modelSchema/db
+- Mongoose/DB
+  - connection
+  - Models
+  - db.controllers 
+- Server
+  - Auth
+  - bucketApp
+    - api.controllers
 
 
 #### TODO
@@ -79,4 +80,10 @@ Server starts on `port:5000`
 
 
 
+##### LICENSE
+* LICENCE: CC BY-NC-ND
+* SOURCE: https://creativecommons.org/licenses/by-nc-nd/4.0/legalcode
+
+
 ##### Thank you
+
