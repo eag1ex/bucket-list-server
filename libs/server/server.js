@@ -27,7 +27,7 @@ module.exports = (DEBUG = true) => {
 
     // ------------ init mongo DB
     const MongoDB = require('../mongoDB').mongoDB()
-    // initialise and wait for init to resolve
+    // initialize and wait for init to resolve
     const mongo = new MongoDB(DEBUG)
 
     // ---------- Initialize auth check controllers
@@ -68,7 +68,7 @@ module.exports = (DEBUG = true) => {
         const server = app.listen(config.port, function() {
             var host = (server.address().address || '').replace(/::/, 'localhost')
             var port = server.address().port
-            log('[server]', `runnign on http://${host}:${port}`)
+            log('[server]', `running on http://${host}:${port}`)
             attention('[server]', 'for available routes call: http://localhost:5000/welcome')
         })
         return server

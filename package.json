@@ -7,13 +7,13 @@
     "start": "node ./index",
     "server": "node ./index",
     "populate": "node ./mongo.populate.js",
-    "test": "nyc --reporter=html --port=2222 --reporter=text mocha",
     "lint:install": "npm i babel-eslint eslint eslint-plugin-node eslint-plugin-standard eslint-plugin-promise@latest --save-dev",
     "lint": "./node_modules/.bin/eslint  --ext .js libs",
     "lint:fix": "./node_modules/.bin/eslint --fix --ext .js libs"
   },
   "author": "eaglex.net",
   "license": "CC BY-NC-ND",
+  "engineStrict": true,
   "engines": {
     "node": "~12.0.0",
     "npm": "~6.9.0"
@@ -30,7 +30,6 @@
     "mongoose": "^5.11.19",
     "mongoose-validate": "0.0.5",
     "morgan": "^1.10.0",
-    "nyc": "^15.1.0",
     "q": "^1.5.1",
     "rxjs": "^6.6.6",
     "util": "^0.12.3",

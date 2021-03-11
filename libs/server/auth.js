@@ -1,6 +1,6 @@
 
 /**
- * - ServerAuth extention
+ * - ServerAuth extension
  */
 module.exports = function(expressApp) {
     return class ServerAuth {

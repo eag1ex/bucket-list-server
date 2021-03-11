@@ -141,7 +141,7 @@ function dbControllers(mongo, debug = false) {
                 return Promise.all([Promise.resolve(doc), ...subsDefer])
             }).then(d => {
                 log('Subtasks updated', `count ${d.length - 1}`)
-                return d[0] // only reaturn our doc
+                return d[0] // only return our doc
             })
     }
 

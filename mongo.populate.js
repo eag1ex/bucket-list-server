@@ -5,7 +5,7 @@
 const { mongoDB, dbControllers, Bucket, Subtask } = require('./libs/mongoDB')
 const { onerror, log, attention } = require('x-utils-es/umd')
 const dataInsert = require('./data.inserts')
-
+const CONFIG = require('./config')
 const populate = async() => {
     const MongoDB = mongoDB()
     const mongo = new MongoDB(true)
@@ -23,7 +23,7 @@ const populate = async() => {
 
         const defaultUser = {
             user: {
-                name: 'oozou'
+                name: CONFIG.mongo.defaultUser
             }
         }
 
@@ -35,8 +35,8 @@ const populate = async() => {
         // return
 
         // ------- NOTE populate our data with data.inserts.js
-        // let populatedbBucketList = await executes.bucketCollectionInsert(dataInsert, defaultUser)
-        // attention('[bucketCollectionInsert]', populatedbBucketList)
+        let populatedBucketList = await executes.bucketCollectionInsert(dataInsert, defaultUser)
+        attention('[bucketCollectionInsert]', populatedBucketList)
         // return
 
         // ------- NOTE remove only subtasks

@@ -152,4 +152,5 @@
     },
     "tslint.enable": false,
     "tslint.jsEnable": false,
+    "cSpell.enabled":true
 }

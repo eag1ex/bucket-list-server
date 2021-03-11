@@ -5,29 +5,29 @@
 module.exports = [
     {
         title: 'Thailand Trip',
-        status: 'completed',   // [pending/completed]
+        status: 'completed', // [pending/completed]
         subtasks: [
             {
                 title: 'Visit Bangkok',
-                status: 'pending',  // [pending/completed]
+                status: 'pending' // [pending/completed]
             },
             {
                 title: 'Visit Ko Pha-ngan',
-                status: 'pending',
+                status: 'pending'
             },
             {
                 title: 'Visit Chatuchak Park',
-                status: 'pending',
+                status: 'pending'
             },
 
             {
                 title: 'Visit Chiang Mai',
-                status: 'pending',
+                status: 'pending'
             },
 
             {
                 title: 'Visit Phuket',
-                status: 'pending',
+                status: 'pending'
 
             }
         ]
@@ -40,20 +40,20 @@ module.exports = [
         subtasks: [
             {
                 title: 'Cat ba Island',
-                status: 'pending',
+                status: 'pending'
             },
             {
                 title: 'Visit Da Nang',
-                status: 'pending',
+                status: 'pending'
 
             },
             {
                 title: 'Visit Hanoi',
-                status: 'pending',
+                status: 'pending'
             },
             {
                 title: 'Visit Ha Giang',
-                status: 'pending',
+                status: 'pending'
 
             }
         ]
@@ -65,15 +65,15 @@ module.exports = [
         subtasks: [
             {
                 title: 'Visit Siem Reap',
-                status: 'pending',
+                status: 'pending'
             },
             {
                 title: 'Visit Angkor Thum',
-                status: 'pending',
+                status: 'pending'
             },
             {
                 title: 'Visit Phnom Penh',
-                status: 'pending',
+                status: 'pending'
             }
         ]
     },
@@ -85,17 +85,17 @@ module.exports = [
             {
 
                 title: 'Visit Kuaka Lumpur',
-                status: 'pending',
+                status: 'pending'
             },
             {
 
                 title: 'Visit Twin Towers',
-                status: 'pending',
+                status: 'pending'
 
             },
             {
                 title: 'Visit Penang',
-                status: 'pending',
+                status: 'pending'
             }
         ]
     },
@@ -106,12 +106,12 @@ module.exports = [
         subtasks: [
             {
                 title: 'Visit Cebu',
-                status: 'pending',
+                status: 'pending'
 
             },
             {
                 title: 'Visit Manila',
-                status: 'pending',
+                status: 'pending'
             }
         ]
     },
@@ -122,15 +122,15 @@ module.exports = [
             {
 
                 title: 'Visit Kenya',
-                status: 'pending',
+                status: 'pending'
             },
             {
                 title: 'Visit Kenay, Mombasa coast',
-                status: 'pending',
+                status: 'pending'
             },
             {
                 title: 'Visit Kenay, Safari',
-                status: 'pending',
+                status: 'pending'
             }
         ]
     }

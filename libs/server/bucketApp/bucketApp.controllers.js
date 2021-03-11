@@ -50,7 +50,7 @@ module.exports = (mongo) => {
             }
 
             const bucketData = {
-                // NOTE assing static user to each request for now
+                // NOTE assign static user to each request for now
                 user: { name: CONFIG.mongo.defaultUser },
                 status: 'pending',
                 title: body.title
