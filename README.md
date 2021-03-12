@@ -5,6 +5,7 @@
 
 #### About
 Full Rest API Express.js server with Mongoose/mongoDB integration, backend API implementation for Bucket List client app. 
+
 * Mongoose DB One To Many (Many)
 * Good Server and database separation
 * Implemented Error codes  
@@ -12,7 +13,8 @@ Full Rest API Express.js server with Mongoose/mongoDB integration, backend API i
 
 #### Installation
 Build in `Node.js 12.0.0` and `NPM 6.9.0` in strict mode, maybe supported on higher but not tested
-- How to install mongoDB, please refer to installation guide: `https://docs.mongodb.com/manual/administration/install-community/` once ready, start your database `mongod --dbpath xxx`, run the install
+
+* How to install mongoDB, please refer to installation guide: `https://docs.mongodb.com/manual/administration/install-community/` once ready, start your database `mongod --dbpath xxx`, run the install
 
 ```sh
 /$ npm i 
@@ -35,6 +37,7 @@ Server starts on `port:5000`
 
 
 #### Database
+
 * Populate DB:
   - To populate database refer to `./mongo.populate.js` file where you will find handy functions to run db populate for you. Main functions are `executes.purgeDB()` and `executes.bucketCollectionInsert(dataInsert, defaultUser)`
   - dump file to populate is database: `./data.inserts.js`
@@ -73,10 +76,12 @@ Application stack: Express.js, Mongoose.js, MongoDB, REST/API, Javascript, LINT
 
 
 #### Tests
+
 * For now there are no coverage and tests optimized, i will get around to it.
 
 
 #### TODO
+
 * NYC and Mocha for coverage
 * Stage MongoDB on `https://www.mongodb.com/cloud/atlas`
 * State server on Heroku. 
@@ -84,6 +89,7 @@ Application stack: Express.js, Mongoose.js, MongoDB, REST/API, Javascript, LINT
 
 
 ##### LICENSE
+
 * LICENCE: CC BY-NC-ND
 * SOURCE: https://creativecommons.org/licenses/by-nc-nd/4.0/legalcode
 
