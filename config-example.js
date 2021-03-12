@@ -1,5 +1,5 @@
 /**
- * replace this file with `config.js` and add appropriate DB access
+ * rename this file with `config.js` and add appropriate DB access uri
  * NOTE When using dbRemote = true, you must add remote uri
  */
 
