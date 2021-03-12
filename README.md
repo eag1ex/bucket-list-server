@@ -45,16 +45,14 @@ Server starts on `port:5000`
 * APIs
   - controllers for bucketApp located in : `./libs/server/bucketApp/..`
   
-  ```sh
-
+```sh
     (GET)  http://localhost:5000/bucket/list
     (POST) body:{title}   http://localhost:5000/bucket/create # create initial bucket 
     (POST) body:{title}   http://localhost:5000/bucket/:id/update-status # update bucket status and all subtasks
     (POST) body:{status}  http://localhost:5000/bucket/:id/bucket-only-update-status # update only bucket status
     (POST) body:{title}   http://localhost:5000/bucket/:id/rel/subtask/create # create subtask in relation to bucket
     (POST) body:{status}  http://localhost:5000/bucket/rel/subtask/:todo_id/update-status # update subtask
-
-  ```
+```
 
 * Mongoose controllers are located in `./libs/mongoDB/..`
 * Express server runs the mini app for bucketApp routing to `/bucket`
