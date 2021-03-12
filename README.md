@@ -43,7 +43,7 @@ Server starts on `port:5000`
   - dump file to populate is database: `./data.inserts.js`
 
 * APIs
-  - controllers for bucketApp located in : `./libs/server/bucketApp/*`
+  - controllers for bucketApp located in : `./libs/server/bucketApp/..`
   
   ```sh
 
@@ -55,7 +55,8 @@ Server starts on `port:5000`
     (POST) body:{status}  http://localhost:5000/bucket/rel/subtask/:todo_id/update-status # update subtask
 
   ```
-* Mongoose controllers are located in `./libs/mongoDB/*`
+
+* Mongoose controllers are located in `./libs/mongoDB/..`
 * Express server runs the mini app for bucketApp routing to `/bucket`
 
 
