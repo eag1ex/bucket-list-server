@@ -37,14 +37,12 @@ Server starts on `port:5000`
 
 
 #### Database
-
 - Populate DB:
   - To populate database refer to `./mongo.populate.js` file where you will find handy functions to run db populate for you. Main functions are `executes.purgeDB()` and `executes.bucketCollectionInsert(dataInsert, defaultUser)`
   - dump file to populate is database: `./data.inserts.js`
   - to populate run: `npm run populate`
-
-- APIs
-  - controllers for bucketApp located in : `./libs/server/bucketApp/..`
+  - APIs
+    - controllers for bucketApp located in : `./libs/server/bucketApp/..`
   
 ```sh
     (GET)  http://localhost:5000/bucket/list
