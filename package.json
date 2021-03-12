@@ -32,7 +32,6 @@
     "morgan": "^1.10.0",
     "q": "^1.5.1",
     "rxjs": "^6.6.6",
-    "util": "^0.12.3",
     "x-utils-es": "^1.6.1"
   },
   "devDependencies": {

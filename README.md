@@ -1,5 +1,5 @@
 
-### Bucket List Server
+### Bucket List (Server)
 #### - [ Developed by Eaglex ](http://eaglex.net)
 
 
@@ -12,7 +12,7 @@ Full Rest API Express.js server with Mongoose/mongoDB integration, backend API i
 
 #### Installation
 Build in `Node.js 12.0.0` and `NPM 6.9.0` in strict mode, maybe supported on higher but not tested
-- How to install mongoDB, please refer to installation guide: `https://docs.mongodb.com/manual/administration/install-community/` once ready, run the install
+- How to install mongoDB, please refer to installation guide: `https://docs.mongodb.com/manual/administration/install-community/` once ready, start your database `mongod --dbpath xxx`, run the install
 
 ```sh
 /$ npm i 
@@ -58,10 +58,6 @@ Server starts on `port:5000`
 Application stack: Express.js, Mongoose.js, MongoDB, REST/API, Javascript, LINT
 
 
-#### Tests
-* For now there are no coverage and tests optimized, i will get around to it.
-
-
 #### Code Hierarchy
 - Mongoose/DB
   - connection
@@ -71,6 +67,11 @@ Application stack: Express.js, Mongoose.js, MongoDB, REST/API, Javascript, LINT
   - Auth
   - bucketApp
     - api.controllers
+
+
+
+#### Tests
+* For now there are no coverage and tests optimized, i will get around to it.
 
 
 #### TODO
