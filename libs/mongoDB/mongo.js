@@ -56,16 +56,19 @@ module.exports = function() {
 
         connectionStatus() {
             if (this.conSubscribed) return this
+            let conType = CONFIG.mongo.remote ? `[mongo][remote]` : `[mongo]`
 
             this.connectionStatus = new Subject()
             this.conSubscribed = this.connectionStatus.subscribe(v => {
-                if (v.connect) attention('[mongo][status]', 'CONNECTED')
-                if (v.open) attention('[mongo][status]', 'CONNECTION_OPENED')
+                if (v.connect) attention(`${conType}[status]`, 'CONNECTED')
+                if (v.open) {
+                    attention(`${conType}[status]`, 'CONNECTION_OPEN')
+                }
 
-                if (v.error) onerror('[mongo][status]', v.error)
+                if (v.error) onerror(`${conType}[status]`, v.error)
                 this.conSubscribed.complete()
             }, err => {
-                onerror('[mongo][status]', err)
+                onerror(`${conType}[status]`, err)
                 this.conSubscribed.complete()
             }, complete => {
                 // done
