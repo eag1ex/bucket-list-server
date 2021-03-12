@@ -21,7 +21,9 @@ Build in `Node.js 12.0.0` and `NPM 6.9.0` in strict mode, maybe supported on hig
 
 
 #### Config
-Configuration defaults and database presets are located in `./config.js`
+- Rename `./config-example.js` with `./config.js` and update your db access path before starting the server!
+- Configuration defaults and database presets are located in `./config.js`
+
 
 
 #### Start

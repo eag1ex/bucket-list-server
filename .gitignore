@@ -10,7 +10,9 @@ assets
 desktop.ini
 info.md
 mongoDB.bat
-example.js
+./example.js
+
+./config.js
 
 # Docker
 Dockerfile
