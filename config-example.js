@@ -3,8 +3,6 @@
  * NOTE When using dbRemote = true, you must add remote uri
  */
 
-const { config } = require('rxjs')
-
 const port = process.env.PORT || (process.argv[2] || 5000)
 const dbRemote = false
 
