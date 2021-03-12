@@ -12,6 +12,6 @@ module.exports = {
     mongo: {
         remote: dbRemote,
         database: dbRemote ? `mongodb://localhost/bucket_list` : `mongodb://localhost/bucket_list`,
-        defaultUser: 'johndoe' // our database default user
+        defaultUser: 'johndoe' // our project database default user
     }
 }

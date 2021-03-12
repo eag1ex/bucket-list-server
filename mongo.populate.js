@@ -53,7 +53,7 @@ const populate = async() => {
         // attention('[bucketList]', JSON.stringify(bucketList,null,2) )
         // return
 
-        // ------ NOTE comment this return, to execute manual inserts, and updates -------------
+        // ------ NOTE uncomment this return, to execute manual inserts, and updates -------------
         return
 
         let bucket = await executes.createBucket({
