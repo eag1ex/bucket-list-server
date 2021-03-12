@@ -11,8 +11,7 @@ desktop.ini
 info.md
 mongoDB.bat
 ./example.js
-
-./config.js
+config.js
 
 # Docker
 Dockerfile
