@@ -1,6 +1,7 @@
 
 const session = require('express-session')
 // to replace with https://www.npmjs.com/package/cookie-session
+const config = require('../../config')
 module.exports = (app) => {
     app.use(session({
         cookie: {
@@ -10,9 +11,9 @@ module.exports = (app) => {
             //     secure: true,
             //   sameSite:true
         },
-        secret: 'xcv98734jkdfs896324jhdsf',
+        secret: config.secret,
         // saveUninitialized: false, // don't create session until something stored
-        resave: false // don't save session if unmodified
-
+        resave: false, // don't save session if unmodified
+        saveUninitialized: true
     }))
 }

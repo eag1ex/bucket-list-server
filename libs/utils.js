@@ -110,7 +110,7 @@ exports.JWTverifyAccess = (jwt, req, token) => {
     } else {
         jwt.verify(token, config.secret, function(err, decoded) {
             if (err) {
-                onerror('[JWTverifyAccess]', err)
+                onerror('[JWTverifyAccess]', err.toString())
                 defer.reject('NOT_AUTHENTICATED')
             } else {
                 req.token = decoded // [1]
@@ -130,7 +130,7 @@ exports.JWTverifyAccess = (jwt, req, token) => {
 exports.validate = (url, allowed) => {
     const validate = allowed.filter((val) => {
         if (url === val && val === '/') return true // for base route
-        else return url.indexOf(val) !== -1
+        else if (val !== '/') return url.indexOf(val) !== -1
     }).length >= 1
     return validate
 }

@@ -19,7 +19,6 @@ module.exports = (DEBUG = true) => {
     const { log, attention, onerror } = require('x-utils-es/umd')
     const express = require('express')
     const app = express()
-    const bucketRouter = express.Router()
     const morgan = require('morgan')
     const bodyParser = require('body-parser')
 
@@ -38,11 +37,12 @@ module.exports = (DEBUG = true) => {
     // for rendering html
     app.engine('html', ejs.__express) // ejs.renderFile
     app.set('view engine', 'html')
-    app.set('views', path.join(__dirname, 'views/app'))
-    app.set('views', path.join(__dirname, 'views/admin'))
-    app.use('/libs/', express.static(path.join(__dirname, 'views/app/libs')))
-    app.use('/', express.static(path.join(__dirname, 'views/app')))
+    app.set('views', path.join(config.viewsDir, 'app'))
+    app.set('views', path.join(config.viewsDir, 'admin'))
+    app.use(express.static(path.join(config.viewsDir, './bucket-app')))
+    app.use('/login/', express.static(path.join(config.viewsDir, './admin')))
 
+    session(app)
     // ------------ init mongo DB
     const MongoDB = require('../mongoDB').mongoDB()
     // initialize and wait for init to resolve
@@ -53,22 +53,24 @@ module.exports = (DEBUG = true) => {
         let serverAuth = new ServerAuth(DEBUG)
 
         // validate login to ./app with post/auth credentials
-        app.post('/auth', serverAuth.bind(serverAuth))
+        app.post('/auth', serverAuth.postAuth.bind(serverAuth))
         serverAuth.AppUseAuth()
+        app.get('/login', serverAuth.login.bind(serverAuth))
     } catch (err) {
         onerror('[ServerAuth]', err)
+        return
     }
 
     // ----- load our apps routes
+    let bucketRouter
     try {
-        require('./bucketApp/bucketApp.router')(mongo, bucketRouter, jwt, DEBUG)
+        bucketRouter = require('./bucketApp/bucketApp.router')(config, mongo, jwt, DEBUG)
         app.use('/bucket', bucketRouter)
     } catch (err) {
         onerror('[bucketApp]', err)
     }
 
     // -- add session validation to master app
-    session(app)
 
     app.use('/welcome', function(req, res) {
         return res.status(200).json({ success: true, message: 'works fine', url: req.url, available_routes: listRoutes(bucketRouter.stack, '/bucket'), status: 200 })
@@ -82,7 +84,7 @@ module.exports = (DEBUG = true) => {
     // -------- handle errors
     app.use(function(error, req, res, next) {
         onerror(error)
-        res.status(500).json({ error: error.toString(), ...messages['500'] })
+        res.status(500).json({ error: true, ...messages['500'] })
     })
 
     // ------ run server

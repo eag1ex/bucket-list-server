@@ -12,6 +12,17 @@ module.exports = (mongo) => {
         }
 
         /**
+         * /bucket/app
+         * render out app here
+         * @param {*} req
+         * @param {*} res
+         */
+        app(req, res, next) {
+            // if (req.url.indexOf('api') !== -1) return next()
+            res.render('../bucket-app/index')
+        }
+
+        /**
          * - (GET) REST/api
          * - `example:  /bucket/list`
          * -  return all items in the bucket for current user

@@ -6,12 +6,21 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Login Form</title>
   <link rel="stylesheet" type="text/css" href="./style.css">
+
+  <script type="text/javascript">
+    function clearField() {
+       if(document.getElementById) {
+          // document.loginform.reset();
+          // console.log('form cleared!')
+       }
+    }
+    </script>
 </head>
 <body>
   <section class="container">
     <div class="login">
       <h1>Gateway Login</h1>
-      <form method="post" action="/auth">
+      <form name="loginform" id="loginform"  method="post" action="/auth" onSubmit="clearField();">
         <p><input type="text" name="username" value="" placeholder="Username"></p>
         <p><input type="password" name="password" value="" placeholder="Password"></p>
         <p class="submit"><input type="submit" name="commit_web_reauth" value="Login"></p>

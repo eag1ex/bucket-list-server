@@ -19,7 +19,13 @@ module.exports = function(expressApp, jwt) {
          * @readonly
          */
         get allowed() {
-            return ['/auth', '/login', '/signout', '/welcome', '/']// api/
+            return ['/auth', '/login', '/signout', '/welcome', '/']
+        }
+
+        login(req, res, next) {
+            res.setHeader('Content-Type', 'text/html')
+            return res.render('login', {
+            })
         }
 
         /**
@@ -54,19 +60,16 @@ module.exports = function(expressApp, jwt) {
             const token = jwt.sign(authentication, config.secret, { expiresIn: '30m' })
             req.session.accessToken = token
 
+            // your "Authorization: Bearer {token}"
             attention('[header][authorization][token]', token)
 
             setTimeout(() => {
                 log('[postAuth][success]')
-                defer.resolve(true)
-            }, 500)
-
-            defer.promise.then(() => {
-                res.redirect(config.HOST + '/app/')
-            })
+                res.redirect(config.HOST + '/bucket/')
+            }, 100)
         }
 
-        authCheck(req, res, next) {
+        async authCheck(req, res, next) {
             res.header('Access-Control-Allow-Origin', '*')
             res.header('Access-Control-Allow-Methods', 'GET')
             res.header('Access-Control-Allow-Methods', 'POST')
@@ -76,17 +79,17 @@ module.exports = function(expressApp, jwt) {
 
             // allowed routes without auth
             const valid = validate(req.url, this.allowed)
-            if (valid) {
-                log('[route][valid][no_auth]', req.url)
-                return next()
-            } else {
-                // check if token exists
-                const token = req.session.accessToken || getToken(req.headers)
-                JWTverifyAccess(jwt, req, token).then(n => {
+
+            if (valid) return next()
+            else {
+                // check if token exists from server session or client supplied!
+                const token = (req.session || {}).accessToken || getToken(req.headers)
+                try {
+                    await JWTverifyAccess(jwt, req, token)
                     return next()
-                }, err => {
+                } catch (err) {
                     return res.status(400).send({ error: err })
-                })
+                }
             }
         }
 

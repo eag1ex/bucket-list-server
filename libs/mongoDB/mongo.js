@@ -33,7 +33,7 @@ module.exports = function() {
                 mongos: true,
                 // useMongoClient: true,
                 keepAlive: 300000,
-                autoReconnect: true,
+                // autoReconnect: true,
                 connectTimeoutMS: 30000,
                 // bufferMaxEntries :10,
                 // bufferCommands :true,

@@ -1,6 +1,9 @@
-module.exports = (mongo, bucketRouter, jwt, DEBUG) => {
-    const messages = require('../../messages')
+module.exports = (config = {}, mongo, jwt, DEBUG) => {
+    const path = require('path')
     const { log } = require('x-utils-es/umd')
+    const express = require('express')
+    const bucketRouter = express.Router()
+    const messages = require('../../messages')
 
     const ServerCtrs = require('./bucketApp.controllers')(mongo)
 
@@ -12,16 +15,24 @@ module.exports = (mongo, bucketRouter, jwt, DEBUG) => {
         next()
     })
 
-    // ---------- set server routes
-    bucketRouter.get('/list', controllers.bucketList.bind(controllers))
-    bucketRouter.post('/create', controllers.createBucket.bind(controllers))
-    bucketRouter.post('/:id/update-status', controllers.updateBucketStatus.bind(controllers))
-    bucketRouter.post('/:id/bucket-only-update-status', controllers.updateBucketOnly.bind(controllers))
-    bucketRouter.post('/:id/rel/subtask/create', controllers.createSubtask.bind(controllers))
-    bucketRouter.post('/rel/subtask/:todo_id/update-status', controllers.updateSubtaskStatus.bind(controllers))
+    // app static routes
+    bucketRouter.use(express.static(path.join(config.viewsDir, './bucket-app')))
+    bucketRouter.use('/assets/', express.static(path.join(config.viewsDir, './bucket-app')))
+    bucketRouter.use('/assets/libs/', express.static(path.join(config.viewsDir, './bucket-app/libs')))
 
+    // ---------- set server routes
+    bucketRouter.get('/api/list', controllers.bucketList.bind(controllers))
+    bucketRouter.post('/api/create', controllers.createBucket.bind(controllers))
+    bucketRouter.post('/api/:id/update-status', controllers.updateBucketStatus.bind(controllers))
+    bucketRouter.post('/api/:id/bucket-only-update-status', controllers.updateBucketOnly.bind(controllers))
+    bucketRouter.post('/api/:id/rel/subtask/create', controllers.createSubtask.bind(controllers))
+    bucketRouter.post('/api/rel/subtask/:todo_id/update-status', controllers.updateSubtaskStatus.bind(controllers))
+    // render spa index file
+    bucketRouter.get('/*', controllers.app.bind(controllers))
     // catch all other routes
-    bucketRouter.all('*', function(req, res) {
+    bucketRouter.all('/api/*', function(req, res) {
         res.status(400).json({ ...messages['001'], error: true })
     })
+
+    return bucketRouter
 }
