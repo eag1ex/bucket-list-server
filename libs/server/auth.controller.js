@@ -3,7 +3,6 @@
  * - ServerAuth extension
  */
 module.exports = function(expressApp, jwt) {
-    const q = require('q')
     const { log, warn, attention } = require('x-utils-es/umd')
     const config = require('../../config')
     const { validate, getToken, JWTverifyAccess } = require('../utils')
@@ -36,7 +35,6 @@ module.exports = function(expressApp, jwt) {
          * @returns
          */
         postAuth(req, res) {
-            const defer = q.defer()
             const auth = req.body
             // console.log('what is the auth.body',req.body);
 

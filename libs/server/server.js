@@ -42,7 +42,9 @@ module.exports = (DEBUG = true) => {
     app.use(express.static(path.join(config.viewsDir, './bucket-app')))
     app.use('/login/', express.static(path.join(config.viewsDir, './admin')))
 
+    // save logged in session and manage expiry
     session(app)
+
     // ------------ init mongo DB
     const MongoDB = require('../mongoDB').mongoDB()
     // initialize and wait for init to resolve

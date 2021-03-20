@@ -18,8 +18,9 @@ module.exports = (mongo) => {
          * @param {*} res
          */
         app(req, res, next) {
-            // if (req.url.indexOf('api') !== -1) return next()
-            res.render('../bucket-app/index')
+            // just in case
+            if (req.url.indexOf('/api') !== -1) return next()
+            else return res.render('../bucket-app/index')
         }
 
         /**
