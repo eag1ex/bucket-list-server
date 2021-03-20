@@ -1,4 +1,4 @@
-module.exports = (mongo, bucketRouter, DEBUG) => {
+module.exports = (mongo, bucketRouter, jwt, DEBUG) => {
     const messages = require('../../messages')
     const { log } = require('x-utils-es/umd')
 

@@ -1,6 +1,8 @@
 const { reduce } = require('lodash')
 const { copy, onerror, isEmpty } = require('x-utils-es/umd')
+const q = require('q')
 
+const config = require('../config')
 exports.listRoutes = (stack, appNameRoute) => {
     return reduce(stack, (n, el, k) => {
         if (el.route) {
@@ -86,4 +88,49 @@ exports.onMessages = (messages) => {
         msgs[k] = { message: v[0], code: v[1] }
     }
     return msgs
+}
+
+/**
+ * Grab tokep from headers
+ * @param {*} headers {}
+ */
+exports.getToken = (headers = {}) => {
+    if (headers && headers.authorization) {
+        const parted = headers.authorization.split(' ')
+        if (parted.length === 2) return parted[1]
+        else return null
+    }
+    return null
+}
+
+exports.JWTverifyAccess = (jwt, req, token) => {
+    const defer = q.defer()
+    if (!token) {
+        return Promise.reject('NO_TOKEN')
+    } else {
+        jwt.verify(token, config.secret, function(err, decoded) {
+            if (err) {
+                onerror('[JWTverifyAccess]', err)
+                defer.reject('NOT_AUTHENTICATED')
+            } else {
+                req.token = decoded // [1]
+                defer.resolve(true)
+            }
+        })
+    }
+
+    return defer.promise
+}
+
+/**
+ * check allowed url routes to skipp authentication
+ * @param {*} url
+ * @param {*} allowed
+ */
+exports.validate = (url, allowed) => {
+    const validate = allowed.filter((val) => {
+        if (url === val && val === '/') return true // for base route
+        else return url.indexOf(val) !== -1
+    }).length >= 1
+    return validate
 }

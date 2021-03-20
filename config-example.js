@@ -9,6 +9,9 @@ const dbRemote = false
 module.exports = {
 
     port: (typeof port === 'number') ? port : 5000,
+    'secret': '', // NOTE provide your static token
+    HOST: `http://localhost:${port}`, // :'',
+
     mongo: {
         remote: dbRemote,
         database: dbRemote ? `mongodb://localhost/bucket_list` : `mongodb://localhost/bucket_list`,

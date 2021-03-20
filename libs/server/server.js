@@ -1,5 +1,19 @@
+// TODO add expiry token and db purge on session expiry
+// TODO user login
+// TODO add app
+// TODO deploy to heroku
+
 module.exports = (DEBUG = true) => {
-    const config = require('../../config')
+    let config
+
+    try {
+        config = require('../../config')
+    } catch (err) {
+        console.error('make sure to rename ./config-example.js to ./config.js')
+        return
+    }
+    const path = require('path')
+    const session = require('./express-sess')
     const { listRoutes } = require('../utils')
     const messages = require('../messages')
     const { log, attention, onerror } = require('x-utils-es/umd')
@@ -9,11 +23,11 @@ module.exports = (DEBUG = true) => {
     const morgan = require('morgan')
     const bodyParser = require('body-parser')
 
-    const ServerAuth = require('./auth')(app)
+    const jwt = require('jsonwebtoken')
+    const ServerAuth = require('./auth.controller')(app, jwt)
 
     const cors = require('cors')
     const ejs = require('ejs')
-    // const q = require('q')
 
     app.set('trust proxy', 1) // trust first proxy
     app.use(morgan('dev'))
@@ -22,8 +36,12 @@ module.exports = (DEBUG = true) => {
     app.use(cors())
 
     // for rendering html
-    app.engine('html', ejs.__express)
+    app.engine('html', ejs.__express) // ejs.renderFile
     app.set('view engine', 'html')
+    app.set('views', path.join(__dirname, 'views/app'))
+    app.set('views', path.join(__dirname, 'views/admin'))
+    app.use('/libs/', express.static(path.join(__dirname, 'views/app/libs')))
+    app.use('/', express.static(path.join(__dirname, 'views/app')))
 
     // ------------ init mongo DB
     const MongoDB = require('../mongoDB').mongoDB()
@@ -32,20 +50,25 @@ module.exports = (DEBUG = true) => {
 
     // ---------- Initialize auth check controllers
     try {
-        new ServerAuth(DEBUG).AppUseAuth()
+        let serverAuth = new ServerAuth(DEBUG)
+
+        // validate login to ./app with post/auth credentials
+        app.post('/auth', serverAuth.bind(serverAuth))
+        serverAuth.AppUseAuth()
     } catch (err) {
         onerror('[ServerAuth]', err)
     }
 
     // ----- load our apps routes
     try {
-        require('./bucketApp/bucketApp.router')(mongo, bucketRouter, DEBUG)
+        require('./bucketApp/bucketApp.router')(mongo, bucketRouter, jwt, DEBUG)
         app.use('/bucket', bucketRouter)
     } catch (err) {
         onerror('[bucketApp]', err)
     }
 
-    // -----------------------------------
+    // -- add session validation to master app
+    session(app)
 
     app.use('/welcome', function(req, res) {
         return res.status(200).json({ success: true, message: 'works fine', url: req.url, available_routes: listRoutes(bucketRouter.stack, '/bucket'), status: 200 })
