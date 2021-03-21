@@ -12,6 +12,16 @@ Full Rest API Express.js server with Mongoose/mongoDB integration, backend API i
 * Authentication and user session
 
 
+#### Demo:
+Full featured hosted demo of `bucket-list` on :
+```sh
+https://whispering-everglades-48688.herokuapp.com/login
+# login: eaglex
+# password: eaglex
+```
+- demo database is reset and pureged for every session
+
+
 #### Installation
 Build in `Node.js 12.0.0` and `NPM 6.9.0` in strict mode, maybe supported on higher but not tested
 
