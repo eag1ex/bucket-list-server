@@ -39,7 +39,7 @@ module.exports = (DEBUG = true) => {
     app.set('views', path.join(config.viewsDir, 'app'))
     app.set('views', path.join(config.viewsDir, 'admin'))
     app.use('/login/', express.static(path.join(config.viewsDir, './admin')))
-
+    app.use('/bucket/', express.static(path.join(config.viewsDir, './bucket-app')))
     // save logged in session and manage expiry
     session(app)
 
@@ -48,6 +48,10 @@ module.exports = (DEBUG = true) => {
 
     const MongoDB = mongoDB()
     const mongo = new MongoDB(DEBUG)
+    mongo.init().catch(err => {
+        onerror('[mongo]', err)
+        onerror('[mongo]', 'server did not start')
+    })
 
     const dbc = new DBControllers(mongo, /* debug: */false)
     // initialize and wait for init to resolve
@@ -69,7 +73,7 @@ module.exports = (DEBUG = true) => {
     // ----- load our apps routes
     let bucketRouter
     try {
-        bucketRouter = require('./bucketApp/bucketApp.router')(config, dbc, jwt, DEBUG)
+        bucketRouter = require('./bucketApp/bucketApp.router')(config, dbc, mongo, jwt, DEBUG)
         app.use('/bucket', bucketRouter)
     } catch (err) {
         onerror('[bucketApp]', err)
@@ -93,21 +97,14 @@ module.exports = (DEBUG = true) => {
     })
 
     // ------ run server
-
-    return mongo.init().then(async() => {
-        const server = app.listen(config.port, function() {
-            let host = (server.address().address || '').replace(/::/, 'localhost')
-            let port = server.address().port
-            if (config.mongo.remote) {
-                log('[server][remote]', `running on http://${host}:${port}`)
-            } else {
-                log('[server]', `running on http://${host}:${port}`)
-                attention('[server]', 'for available routes call: http://localhost:5000/welcome')
-            }
-        })
-        return server
-    }).catch(err => {
-        onerror('[mongo]', 'server did not start')
-        log('[mongo]', 'make sure your database is running!')
+    const server = app.listen(config.port, function() {
+        let host = (server.address().address || '').replace(/::/, 'localhost')
+        let port = server.address().port
+        if (config.mongo.remote) {
+            log('[server][remote]', `running on http://${host}:${port}`)
+        } else {
+            log('[server]', `running on http://${host}:${port}`)
+            attention('[server]', 'for available routes call: http://localhost:5000/welcome')
+        }
     })
 }

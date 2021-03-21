@@ -1,11 +1,10 @@
-module.exports = (dbc, jwt) => {
+module.exports = (dbc, mongo, jwt) => {
     const CONFIG = require('../../../config')
     const { onerror } = require('x-utils-es/umd')
     const { cleanOut, validID, validStatus } = require('../../utils')
     const messages = require('../../messages')
     // const debug = true
     const DBControllers = require('../../mongoDB/db.controllers')
-
     class ServerController {
         constructor(opts, debug) {
             this.debug = debug
@@ -20,6 +19,16 @@ module.exports = (dbc, jwt) => {
             }
         }
 
+        async onMongoReady(req, res) {
+            try {
+                await mongo.mongooseReady.promise
+                return true
+            } catch (err) {
+                onerror('[onMongoReady]', 'no db connection ?')
+                // return res.status(400).json({ error: 'not connected to database' })
+                throw new Error('no db connection')
+            }
+        }
         /**
          * /bucket/app
          * render out app here
@@ -27,7 +36,6 @@ module.exports = (dbc, jwt) => {
          * @param {*} res
          */
         app(req, res, next) {
-            // just in case
             if (req.url.indexOf('/api') !== -1) return next()
             else return res.render('../bucket-app/index')
         }
@@ -37,9 +45,9 @@ module.exports = (dbc, jwt) => {
          * - `example:  /bucket/list`
          * -  return all items in the bucket for current user
          */
-        bucketList(req, res) {
+        async bucketList(req, res) {
             let limit = 50 // NOTE lets just set a static limit for now!
-
+            await this.onMongoReady(req, res)
             return this.dbc.db.listBuckets(limit)
                 .then(docs => docs.map(d => cleanOut(d)).filter(n => !n.error))
                 .then(n => {
@@ -63,7 +71,8 @@ module.exports = (dbc, jwt) => {
          * - Create new bucket
          * - Accepting: {title}
          */
-        createBucket(req, res) {
+        async createBucket(req, res) {
+            await this.onMongoReady(req, res)
             const body = req.body || {}
 
             if (!body.title || (body.title || '').length < 2) {
@@ -101,7 +110,8 @@ module.exports = (dbc, jwt) => {
         * - Accepting {status}
         * - `example:  /bucket/:id/bucket-only-update-status`
         */
-        updateBucketOnly(req, res) {
+        async updateBucketOnly(req, res) {
+            await this.onMongoReady(req, res)
             const bucketID = req.params.id
             const body = req.body || {}
 
@@ -131,7 +141,8 @@ module.exports = (dbc, jwt) => {
         * - Accepting {status}
         * - `example:  /bucket/:id/update-status`
         */
-        updateBucketStatus(req, res) {
+        async updateBucketStatus(req, res) {
+            await this.onMongoReady(req, res)
             const bucketID = req.params.id
             const body = req.body || {}
 
@@ -162,12 +173,8 @@ module.exports = (dbc, jwt) => {
          * - Accepting {title}
          * - `example:  /bucket/:id/rel/subtask/create`
          */
-        createSubtask(req, res) {
-            /* REVIEW
-              client app should NOT be creating `ids` if we are use a database, correct ?
-              Mongo will generate an id for us and we will return it in a request.
-              PS: It would be bit silly to have two different ids on a subtask model, correct?
-            **/
+        async createSubtask(req, res) {
+            await this.onMongoReady(req, res)
 
             const bucketID = req.params.id
             const body = req.body
@@ -205,11 +212,12 @@ module.exports = (dbc, jwt) => {
         * - `example: /bucket/rel/subtask/:todo_id/update-status`
         * - Accepting {status}
         */
-        updateSubtaskStatus(req, res) {
+        async updateSubtaskStatus(req, res) {
+            await this.onMongoReady(req, res)
             /*
                 REVIEW
                 following the last comment @createSubtask
-                We can now retrieve our tod_id on an existing subtask from the client
+                We can now retrieve our todo_id on an existing subtask from the client
             **/
 
             const subtaskID = req.params.todo_id

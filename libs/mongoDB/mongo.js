@@ -47,7 +47,6 @@ module.exports = function() {
             try {
                 this.connect()
                 await this.mongooseReady.promise
-                await delay(400)
                 return true
             } catch (err) {
                 onerror('[init]', err)
