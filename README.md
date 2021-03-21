@@ -101,7 +101,7 @@ Application stack: Express.js, Mongoose.js, MongoDB, REST/API, Javascript, jsonw
 
 ##### LICENSE
 
-* LICENCE: CC BY-NC-ND
+* LICENCE: CC BY-NC-ND 2.0
 * SOURCE: https://creativecommons.org/licenses/by-nc-nd/4.0/legalcode
 
 
