@@ -20,7 +20,7 @@ https://whispering-everglades-48688.herokuapp.com/login
 # password: eaglex
 ```
 - demo database is reset and pureged for every session
-
+- limited session time, hosted on free dyno, initial load may take bit longer
 
 #### Installation
 Build in `Node.js 12.0.0` and `NPM 6.9.0` in strict mode, maybe supported on higher but not tested
