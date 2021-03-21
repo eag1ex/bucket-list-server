@@ -22,6 +22,10 @@ https://whispering-everglades-48688.herokuapp.com/login
 - demo database is reset and pureged for every session
 - limited session time, hosted on free dyno, initial load may take bit longer
 
+#### Client
+For client app visit: `https://bitbucket.org/eag1ex/bucket-list-app-client`
+
+
 #### Installation
 Build in `Node.js 12.0.0` and `NPM 6.9.0` in strict mode, maybe supported on higher but not tested
 
