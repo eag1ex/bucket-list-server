@@ -1,14 +1,23 @@
-module.exports = (mongo) => {
+module.exports = (dbc, jwt) => {
     const CONFIG = require('../../../config')
     const { onerror } = require('x-utils-es/umd')
     const { cleanOut, validID, validStatus } = require('../../utils')
     const messages = require('../../messages')
-    const debug = true
-    const db = require('../../mongoDB').dbControllers(mongo, debug)
+    // const debug = true
+    const DBControllers = require('../../mongoDB/db.controllers')
 
     class ServerController {
         constructor(opts, debug) {
             this.debug = debug
+
+            // adds intellisense support
+            this.dbc = undefined
+            if (dbc instanceof DBControllers) {
+                // all good
+                this.dbc = dbc
+            } else {
+                throw ('db is not of DBControllers')
+            }
         }
 
         /**
@@ -31,7 +40,7 @@ module.exports = (mongo) => {
         bucketList(req, res) {
             let limit = 50 // NOTE lets just set a static limit for now!
 
-            return db.listBuckets(limit)
+            return this.dbc.db.listBuckets(limit)
                 .then(docs => docs.map(d => cleanOut(d)).filter(n => !n.error))
                 .then(n => {
                     if (!n.length) return []
@@ -68,7 +77,7 @@ module.exports = (mongo) => {
                 title: body.title
             }
 
-            return db.createBucket(bucketData)
+            return this.dbc.db.createBucket(bucketData)
                 .then((doc) => [cleanOut(doc)].filter(n => !n.error)[0])
                 .then(n => {
                     if (n) return n
@@ -99,7 +108,7 @@ module.exports = (mongo) => {
             if (!validID(bucketID)) return res.status(400).json({ error: 'Not a valid {id}' })
             if (!validStatus(body.status || '')) return res.status(400).json({ error: 'Not a valid {status} provided' })
 
-            return db.updateBucketOnly(bucketID, { status: body.status })
+            return this.dbc.db.updateBucketOnly(bucketID, { status: body.status })
                 .then((doc) => [cleanOut(doc)].filter(n => !n.error)[0])
                 .then(n => {
                     if (n) return n
@@ -129,7 +138,7 @@ module.exports = (mongo) => {
             if (!validID(bucketID)) return res.status(400).json({ error: 'Not a valid {id}' })
             if (!validStatus(body.status || '')) return res.status(400).json({ error: 'Not a valid {status} provided' })
 
-            return db.updateBucket(bucketID, { status: body.status })
+            return this.dbc.db.updateBucket(bucketID, { status: body.status })
                 .then((doc) => [cleanOut(doc)].filter(n => !n.error)[0])
                 .then(n => {
                     if (n) return n
@@ -168,11 +177,11 @@ module.exports = (mongo) => {
                 return res.status(400).json({ error: 'Missing {title}, or too short' })
             }
 
-            return db.createSubtask(bucketID, {
+            return this.dbc.db.createSubtask(bucketID, {
                 user: { name: CONFIG.mongo.defaultUser },
                 title: body.title,
                 status: 'pending' })
-                .then(({ subtaskDoc }) => db.getSubtask(subtaskDoc._id))
+                .then(({ subtaskDoc }) => this.dbc.db.getSubtask(subtaskDoc._id))
                 .then((doc) => [cleanOut(doc, 'subtask')].filter(n => !n.error)[0])
                 .then(n => {
                     if (n) return n
@@ -209,7 +218,7 @@ module.exports = (mongo) => {
             if (!validID(subtaskID)) return res.status(400).json({ error: 'Not a valid {todo_id}' })
             if (!validStatus(body.status || '')) return res.status(400).json({ error: 'Not a valid {status} provided' })
 
-            return db.updateSubtask(subtaskID, { status: body.status })
+            return this.dbc.db.updateSubtask(subtaskID, { status: body.status })
                 .then((doc) => [cleanOut(doc, 'subtask')].filter(n => !n.error)[0])
                 .then(n => {
                     if (n) return n

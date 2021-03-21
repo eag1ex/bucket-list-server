@@ -1,11 +1,12 @@
 
 /**
- * @dbControllers
+ * @DBControllers class
  * our mongo executes live here
  */
-function dbControllers(mongo, debug = false) {
+function DBControllers(mongo, debug = false) {
     const { onerror, log, copy, warn } = require('x-utils-es/umd')
     const { Bucket, Subtask } = require('./')
+
     const o = {}
 
     // our db models
@@ -291,8 +292,7 @@ function dbControllers(mongo, debug = false) {
         }
         return { created: true, index: bucIndex }
     }
-
-    return o
+    this.db = o
 }
 
-module.exports = dbControllers
+module.exports = DBControllers

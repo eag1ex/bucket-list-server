@@ -23,7 +23,6 @@ module.exports = (DEBUG = true) => {
     const bodyParser = require('body-parser')
 
     const jwt = require('jsonwebtoken')
-    const ServerAuth = require('./auth.controller')(app, jwt)
 
     const cors = require('cors')
     const ejs = require('ejs')
@@ -45,12 +44,17 @@ module.exports = (DEBUG = true) => {
     session(app)
 
     // ------------ init mongo DB
-    const MongoDB = require('../mongoDB').mongoDB()
-    // initialize and wait for init to resolve
+    const { mongoDB, DBControllers } = require('../mongoDB')
+
+    const MongoDB = mongoDB()
     const mongo = new MongoDB(DEBUG)
+
+    const dbc = new DBControllers(mongo, /* debug: */false)
+    // initialize and wait for init to resolve
 
     // ---------- Initialize auth check controllers
     try {
+        const ServerAuth = require('./auth.controller')(app, dbc, jwt)
         let serverAuth = new ServerAuth(DEBUG)
 
         // validate login to ./app with post/auth credentials
@@ -65,7 +69,7 @@ module.exports = (DEBUG = true) => {
     // ----- load our apps routes
     let bucketRouter
     try {
-        bucketRouter = require('./bucketApp/bucketApp.router')(config, mongo, jwt, DEBUG)
+        bucketRouter = require('./bucketApp/bucketApp.router')(config, dbc, jwt, DEBUG)
         app.use('/bucket', bucketRouter)
     } catch (err) {
         onerror('[bucketApp]', err)

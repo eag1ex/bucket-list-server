@@ -2,15 +2,50 @@
 /**
  * - ServerAuth extension
  */
-module.exports = function(expressApp, jwt) {
-    const { log, warn, attention } = require('x-utils-es/umd')
+module.exports = function(expressApp, dbc, jwt) {
+    const { log, warn, attention, onerror } = require('x-utils-es/umd')
     const config = require('../../config')
     const { validate, getToken, JWTverifyAccess } = require('../utils')
     const ENV = config.env // development,production
+    const dataInsert = require('../../data.inserts')
+    const DBControllers = require('../mongoDB/db.controllers')
 
     return class ServerAuth {
         constructor(debug) {
             this.debug = debug
+
+            // adds intellisense support
+            this.dbc = undefined
+            if (dbc instanceof DBControllers) {
+                // all good
+                this.dbc = dbc
+            } else {
+                throw ('db is not of DBControllers')
+            }
+        }
+
+        /**
+         * purge and repopulated new demo db on every login
+         */
+        async resetDB() {
+            const defaultUser = {
+                user: {
+                    name: config.mongo.defaultUser
+                }
+            }
+            try {
+                let purged = await this.dbc.db.purgeDB()
+                attention('[purged]', purged)
+                // return
+
+                // ------- NOTE populate our data with data.inserts.js
+                let populatedBucketList = await this.dbc.db.bucketCollectionInsert(dataInsert, defaultUser)
+                attention('[bucketCollectionInsert]')
+                return true
+            } catch (err) {
+                onerror('[resetDB]', err)
+            }
+            return false
         }
 
         /**
@@ -35,7 +70,7 @@ module.exports = function(expressApp, jwt) {
          * @param {*} res
          * @returns
          */
-        postAuth(req, res) {
+        async postAuth(req, res) {
             const auth = req.body
             // console.log('what is the auth.body',req.body);
 
@@ -59,13 +94,15 @@ module.exports = function(expressApp, jwt) {
             const token = jwt.sign(authentication, config.secret, { expiresIn: '30m' })
             req.session.accessToken = token
 
+            // ----------- for every new login we reset our demo database
+            await this.resetDB()
+            // ------------------------
+
             // your "Authorization: Bearer {token}"
             attention('[header][authorization][token]', token)
 
-            setTimeout(() => {
-                log('[postAuth][success]')
-                res.redirect(config.HOST + '/bucket/')
-            }, 100)
+            log('[postAuth][success]')
+            return res.redirect(config.HOST + '/bucket/')
         }
 
         async authCheck(req, res, next) {
@@ -89,7 +126,7 @@ module.exports = function(expressApp, jwt) {
                         await JWTverifyAccess(jwt, req, token)
                         return next()
                     } catch (err) {
-                        return res.status(400).send({ error: err })
+                        return res.status(400).send({ error: err, message: 'try loging again' })
                     }
                 }
             } else {

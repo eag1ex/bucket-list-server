@@ -9,6 +9,7 @@ Full Rest API Express.js server with Mongoose/mongoDB integration, backend API i
 * Mongoose DB One To Many (Many)
 * Good Server and database separation
 * Implemented Error codes  
+* Authentication and user session
 
 
 #### Installation
@@ -25,7 +26,6 @@ Build in `Node.js 12.0.0` and `NPM 6.9.0` in strict mode, maybe supported on hig
 #### Config
 - Rename `./config-example.js` with `./config.js` and update your db access path before starting the server!
 - Configuration defaults and database presets are located in `./config.js`
-
 
 
 #### Start
@@ -71,7 +71,7 @@ Server starts on `port:5000`
 
 
 #### Stack
-Application stack: Express.js, Mongoose.js, MongoDB, REST/API, Javascript, LINT
+Application stack: Express.js, Mongoose.js, MongoDB, REST/API, Javascript, jsonwebtoken, LINT
 
 
 #### Code Hierarchy

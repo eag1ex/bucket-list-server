@@ -1,11 +1,11 @@
-module.exports = (config = {}, mongo, jwt, DEBUG) => {
+module.exports = (config = {}, db, jwt, DEBUG) => {
     const path = require('path')
     const { log } = require('x-utils-es/umd')
     const express = require('express')
     const bucketRouter = express.Router()
     const messages = require('../../messages')
 
-    const ServerCtrs = require('./bucketApp.controllers')(mongo)
+    const ServerCtrs = require('./bucketApp.controllers')(db, jwt)
 
     // -------- Initialize our controllers
     const controllers = new ServerCtrs({}, DEBUG)
