@@ -1,7 +1,6 @@
 
 Object.assign = require('object-assign')
 module.exports = (DEBUG = true) => {
-
     let config
 
     try {
@@ -96,6 +95,6 @@ module.exports = (DEBUG = true) => {
 
     // ------ run server
     app.listen(config.port)
-    console.log('Server running on port:' port)
+    console.log('Server running on port:', config.port)
     return app
 }
