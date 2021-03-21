@@ -9,7 +9,8 @@
     "populate": "node ./mongo.populate.js",
     "lint:install": "npm i babel-eslint eslint eslint-plugin-node eslint-plugin-standard eslint-plugin-promise@latest --save-dev",
     "lint": "./node_modules/.bin/eslint  --ext .js libs",
-    "lint:fix": "./node_modules/.bin/eslint --fix --ext .js libs"
+    "lint:fix": "./node_modules/.bin/eslint --fix --ext .js libs",
+    "test": "node test.js"
   },
   "author": "eaglex.net",
   "license": "CC BY-NC-ND",
