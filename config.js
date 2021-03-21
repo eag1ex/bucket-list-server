@@ -1,4 +1,4 @@
-const port = process.env.PORT || (process.argv[2] || 5000)
+const port = process.env.PORT || 5000
 const dbRemote = true
 const path = require('path')
 module.exports = {
