@@ -7,6 +7,8 @@ const port = process.env.PORT || (process.argv[2] || 5000)
 const dbRemote = false
 
 module.exports = {
+    // in production the authentication is enabled
+    env: 'development', // development,production
 
     port: (typeof port === 'number') ? port : 5000,
     'secret': '', // NOTE provide your static token

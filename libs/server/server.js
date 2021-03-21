@@ -39,7 +39,6 @@ module.exports = (DEBUG = true) => {
     app.set('view engine', 'html')
     app.set('views', path.join(config.viewsDir, 'app'))
     app.set('views', path.join(config.viewsDir, 'admin'))
-    app.use(express.static(path.join(config.viewsDir, './bucket-app')))
     app.use('/login/', express.static(path.join(config.viewsDir, './admin')))
 
     // save logged in session and manage expiry

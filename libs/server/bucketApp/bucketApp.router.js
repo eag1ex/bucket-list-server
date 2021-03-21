@@ -17,8 +17,6 @@ module.exports = (config = {}, mongo, jwt, DEBUG) => {
 
     // app static routes
     bucketRouter.use(express.static(path.join(config.viewsDir, './bucket-app')))
-    bucketRouter.use('/assets/', express.static(path.join(config.viewsDir, './bucket-app')))
-    bucketRouter.use('/assets/libs/', express.static(path.join(config.viewsDir, './bucket-app/libs')))
 
     // ---------- set server routes
     bucketRouter.get('/api/list', controllers.bucketList.bind(controllers))
