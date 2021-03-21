@@ -1,2 +1,3 @@
 // ----- start server
-require('./libs/server/server')(true)
+const app = require('./libs/server/server')(true)
+module.exports = app

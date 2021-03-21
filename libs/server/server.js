@@ -1,9 +1,7 @@
-// TODO add expiry token and db purge on session expiry
-// TODO user login
-// TODO add app
-// TODO deploy to heroku
 
 module.exports = (DEBUG = true) => {
+    Object.assign = require('object-assign')
+
     let config
 
     try {
@@ -107,4 +105,6 @@ module.exports = (DEBUG = true) => {
             attention('[server]', 'for available routes call: http://localhost:5000/welcome')
         }
     })
+
+    return app
 }
