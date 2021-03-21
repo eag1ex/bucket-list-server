@@ -1,6 +1,6 @@
 
+Object.assign = require('object-assign')
 module.exports = (DEBUG = true) => {
-    Object.assign = require('object-assign')
 
     let config
 
@@ -95,16 +95,7 @@ module.exports = (DEBUG = true) => {
     })
 
     // ------ run server
-    const server = app.listen(config.port, function() {
-        let host = (server.address().address || '').replace(/::/, 'localhost')
-        let port = server.address().port
-        if (config.mongo.remote) {
-            log('[server][remote]', `running on http://${host}:${port}`)
-        } else {
-            log('[server]', `running on http://${host}:${port}`)
-            attention('[server]', 'for available routes call: http://localhost:5000/welcome')
-        }
-    })
-
+    app.listen(config.port)
+    console.log('Server running on port:' port)
     return app
 }

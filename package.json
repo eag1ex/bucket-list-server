@@ -33,6 +33,7 @@
     "mongoose": "^5.11.19",
     "mongoose-validate": "0.0.5",
     "morgan": "^1.10.0",
+    "object-assign": "^4.1.1",
     "q": "^1.5.1",
     "request": "^2.88.2",
     "rxjs": "^6.6.6",
