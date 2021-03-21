@@ -60,9 +60,13 @@ module.exports = function() {
 
             this.connectionStatus = new Subject()
             this.conSubscribed = this.connectionStatus.subscribe(v => {
-                if (v.connect) attention(`${conType}[status]`, 'CONNECTED')
+                if (v.connect) {
+                    attention(`${conType}[status]`, 'CONNECTED')
+                    this.conSubscribed.complete()
+                }
                 if (v.open) {
                     attention(`${conType}[status]`, 'CONNECTION_OPEN')
+                    this.conSubscribed.complete()
                 }
 
                 if (v.error) onerror(`${conType}[status]`, v.error)
