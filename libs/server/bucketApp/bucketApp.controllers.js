@@ -19,16 +19,16 @@ module.exports = (dbc, mongo, jwt) => {
             }
         }
 
-        async onMongoReady(req, res) {
-            try {
-                await mongo.mongooseReady.promise
-                return true
-            } catch (err) {
-                onerror('[onMongoReady]', 'no db connection ?')
-                // return res.status(400).json({ error: 'not connected to database' })
-                throw new Error('no db connection')
-            }
-        }
+        // async onMongoReady(req, res) {
+        //     try {
+        //         await mongo.mongooseReady.promise
+        //         return true
+        //     } catch (err) {
+        //         onerror('[onMongoReady]', 'no db connection ?')
+        //         // return res.status(400).json({ error: 'not connected to database' })
+        //         throw new Error('no db connection')
+        //     }
+        // }
         /**
          * /bucket/app
          * render out app here
@@ -47,7 +47,7 @@ module.exports = (dbc, mongo, jwt) => {
          */
         async bucketList(req, res) {
             let limit = 50 // NOTE lets just set a static limit for now!
-            await this.onMongoReady(req, res)
+            // await this.onMongoReady(req, res)
             return this.dbc.db.listBuckets(limit)
                 .then(docs => docs.map(d => cleanOut(d)).filter(n => !n.error))
                 .then(n => {
@@ -72,7 +72,7 @@ module.exports = (dbc, mongo, jwt) => {
          * - Accepting: {title}
          */
         async createBucket(req, res) {
-            await this.onMongoReady(req, res)
+            //  await this.onMongoReady(req, res)
             const body = req.body || {}
 
             if (!body.title || (body.title || '').length < 2) {
@@ -111,7 +111,7 @@ module.exports = (dbc, mongo, jwt) => {
         * - `example:  /bucket/:id/bucket-only-update-status`
         */
         async updateBucketOnly(req, res) {
-            await this.onMongoReady(req, res)
+            //  await this.onMongoReady(req, res)
             const bucketID = req.params.id
             const body = req.body || {}
 
@@ -142,7 +142,7 @@ module.exports = (dbc, mongo, jwt) => {
         * - `example:  /bucket/:id/update-status`
         */
         async updateBucketStatus(req, res) {
-            await this.onMongoReady(req, res)
+            // await this.onMongoReady(req, res)
             const bucketID = req.params.id
             const body = req.body || {}
 
@@ -174,7 +174,7 @@ module.exports = (dbc, mongo, jwt) => {
          * - `example:  /bucket/:id/rel/subtask/create`
          */
         async createSubtask(req, res) {
-            await this.onMongoReady(req, res)
+            //   await this.onMongoReady(req, res)
 
             const bucketID = req.params.id
             const body = req.body
@@ -213,7 +213,7 @@ module.exports = (dbc, mongo, jwt) => {
         * - Accepting {status}
         */
         async updateSubtaskStatus(req, res) {
-            await this.onMongoReady(req, res)
+            //  await this.onMongoReady(req, res)
             /*
                 REVIEW
                 following the last comment @createSubtask

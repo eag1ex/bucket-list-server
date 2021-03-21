@@ -36,7 +36,7 @@ module.exports = (DEBUG = true) => {
     app.set('views', path.join(config.viewsDir, 'app'))
     app.set('views', path.join(config.viewsDir, 'admin'))
     app.use('/login/', express.static(path.join(config.viewsDir, './admin')))
-    app.use('/bucket/', express.static(path.join(config.viewsDir, './bucket-app')))
+
     // save logged in session and manage expiry
     session(app)
 
@@ -45,12 +45,8 @@ module.exports = (DEBUG = true) => {
 
     const MongoDB = mongoDB()
     const mongo = new MongoDB(DEBUG)
-    mongo.init().catch(err => {
-        onerror('[mongo]', err)
-        onerror('[mongo]', 'server did not start')
-    })
-
     const dbc = new DBControllers(mongo, /* debug: */false)
+
     // initialize and wait for init to resolve
 
     // ---------- Initialize auth check controllers
@@ -93,8 +89,14 @@ module.exports = (DEBUG = true) => {
         res.status(500).json({ error: true, ...messages['500'] })
     })
 
-    // ------ run server
-    app.listen(config.port)
-    console.log('Server running on port:', config.port)
+    mongo.init().then(n => {
+        // ------ run server
+        app.listen(config.port)
+        console.log('Server running on port:', config.port)
+    }).catch(err => {
+        onerror('[mongo]', err)
+        onerror('[mongo]', 'server did not start')
+    })
+
     return app
 }
