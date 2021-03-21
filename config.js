@@ -1,12 +1,11 @@
-const port = process.env.PORT || 5000
+const port = process.env.PORT || 8080
 const dbRemote = true
 const path = require('path')
 module.exports = {
 
     // in production the authentication is enabled
     env: 'production', // development,production
-
-    port: (typeof port === 'number') ? port : 5000,
+    port: port,
     'secret': 'dsfkj89435klsdfj84543985kdsjflsy4875',
     // HOST: `http://localhost:${port}`, // in localhost keep this line
     HOST: !dbRemote ? `http://localhost:${port}` : `https://whispering-everglades-48688.herokuapp.com`,
