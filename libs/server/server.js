@@ -96,10 +96,14 @@ module.exports = (DEBUG = true) => {
 
     return mongo.init().then(async() => {
         const server = app.listen(config.port, function() {
-            var host = (server.address().address || '').replace(/::/, 'localhost')
-            var port = server.address().port
-            log('[server]', `running on http://${host}:${port}`)
-            attention('[server]', 'for available routes call: http://localhost:5000/welcome')
+            let host = (server.address().address || '').replace(/::/, 'localhost')
+            let port = server.address().port
+            if (config.mongo.remote) {
+                log('[server][remote]', `running on http://${host}:${port}`)
+            } else {
+                log('[server]', `running on http://${host}:${port}`)
+                attention('[server]', 'for available routes call: http://localhost:5000/welcome')
+            }
         })
         return server
     }).catch(err => {

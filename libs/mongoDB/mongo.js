@@ -6,7 +6,7 @@
 *  */
 module.exports = function() {
     const CONFIG = require('../../config')
-    const { onerror, sq, attention } = require('x-utils-es/umd')
+    const { onerror, sq, attention, delay } = require('x-utils-es/umd')
     const mongoose = require('mongoose')
     const { Subject } = require('rxjs')
 
@@ -47,6 +47,7 @@ module.exports = function() {
             try {
                 this.connect()
                 await this.mongooseReady.promise
+                await delay(400)
                 return true
             } catch (err) {
                 onerror('[init]', err)
