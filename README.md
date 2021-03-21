@@ -45,16 +45,29 @@ Server starts on `port:5000`
     - controllers for bucketApp located in : `./libs/server/bucketApp/..`
   
 ```sh
-    (GET)  http://localhost:5000/bucket/list
-    (POST) body:{title}   http://localhost:5000/bucket/create # create initial bucket 
-    (POST) body:{title}   http://localhost:5000/bucket/:id/update-status # update bucket status and all subtasks
-    (POST) body:{status}  http://localhost:5000/bucket/:id/bucket-only-update-status # update only bucket status
-    (POST) body:{title}   http://localhost:5000/bucket/:id/rel/subtask/create # create subtask in relation to bucket
-    (POST) body:{status}  http://localhost:5000/bucket/rel/subtask/:todo_id/update-status # update subtask
+    (GET)  http://localhost:5000/bucket/api/list
+    (POST) body:{title}   http://localhost:5000/bucket/api/create # create initial bucket 
+    (POST) body:{title}   http://localhost:5000/bucket/api/:id/update-status # update bucket status and all subtasks
+    (POST) body:{status}  http://localhost:5000/bucket/api/:id/bucket-only-update-status # update only bucket status
+    (POST) body:{title}   http://localhost:5000/bucket/api/:id/rel/subtask/create # create subtask in relation to bucket
+    (POST) body:{status}  http://localhost:5000/bucket/api/rel/subtask/:todo_id/update-status # update subtask
 ```
 
 * Mongoose controllers are located in `./libs/mongoDB/..`
 * Express server runs the mini app for bucketApp routing to `/bucket`
+
+
+#### Authentication
+* Auth is time based and will expire
+* All db data is reset on every new session
+* The authentication is setup for all api routes `/bucket/api/` and the app at `./bucket/*`
+* You need to login first at `./login` to gain access
+* To disabled authnetication, change the env in `./config.js` to `development`
+
+
+#### Production
+* Simple production mode is set in `./config.js` to enable authentication of routes
+* If you are running the `bucket-list-app` in development mode, or away from `bucket-list-server`, you have to set env=development in `./config.js` (_not the .env_ file!) 
 
 
 #### Stack

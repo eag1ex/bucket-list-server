@@ -6,6 +6,7 @@ module.exports = function(expressApp, jwt) {
     const { log, warn, attention } = require('x-utils-es/umd')
     const config = require('../../config')
     const { validate, getToken, JWTverifyAccess } = require('../utils')
+    const ENV = config.env // development,production
 
     return class ServerAuth {
         constructor(debug) {
@@ -74,20 +75,26 @@ module.exports = function(expressApp, jwt) {
             res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization')
             res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization, token-expiry')
             res.header('Referrer-Policy', 'no-referrer') // for google external assets
+            //
 
             // allowed routes without auth
-            const valid = validate(req.url, this.allowed)
+            if (ENV === 'production') {
+                const valid = validate(req.url, this.allowed)
 
-            if (valid) return next()
-            else {
-                // check if token exists from server session or client supplied!
-                const token = (req.session || {}).accessToken || getToken(req.headers)
-                try {
-                    await JWTverifyAccess(jwt, req, token)
-                    return next()
-                } catch (err) {
-                    return res.status(400).send({ error: err })
+                if (valid) return next()
+                else {
+                    // check if token exists from server session or client supplied!
+                    const token = (req.session || {}).accessToken || getToken(req.headers)
+                    try {
+                        await JWTverifyAccess(jwt, req, token)
+                        return next()
+                    } catch (err) {
+                        return res.status(400).send({ error: err })
+                    }
                 }
+            } else {
+                // in development
+                return next()
             }
         }
 
