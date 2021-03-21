@@ -12,7 +12,7 @@ Full Rest API Express.js server with Mongoose/mongoDB integration, backend API i
 * Authentication and user session
 
 
-#### Demo:
+#### Demo
 Full featured hosted demo of `bucket-list` on :
 ```sh
 https://whispering-everglades-48688.herokuapp.com/login
