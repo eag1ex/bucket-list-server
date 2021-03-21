@@ -8,8 +8,8 @@ module.exports = {
 
     port: (typeof port === 'number') ? port : 5000,
     'secret': 'dsfkj89435klsdfj84543985kdsjflsy4875',
-    HOST: `http://localhost:${port}`, // in localhost keep this line
-    // HOST: !dbRemote ? `http://localhost:${port}` : `https://whispering-everglades-48688.herokuapp.com`,
+    // HOST: `http://localhost:${port}`, // in localhost keep this line
+    HOST: !dbRemote ? `http://localhost:${port}` : `https://whispering-everglades-48688.herokuapp.com`,
     viewsDir: path.join(__dirname, './views'),
     mongo: {
         remote: dbRemote,
