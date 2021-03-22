@@ -37,6 +37,7 @@ module.exports = (dbc, mongo, jwt) => {
          */
         app(req, res, next) {
             if (req.url.indexOf('/api') !== -1) return next()
+            if (['.jpg', '.png', '.ico', '.json', '.js', '.css', '.txt', '.map'].indexOf(req.url) !== -1) return next()
             else return res.render('../bucket-app/index')
         }
 
