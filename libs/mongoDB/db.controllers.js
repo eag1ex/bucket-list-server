@@ -266,7 +266,7 @@ function DBControllers(mongo, debug = false) {
 
                 let bucDoc = await createBucket({ ...bucketItem, ...defaultUser })
                 log('[bucket][created]', bucDoc._id)
-
+                log(`[subtasks][size]`, subtasks.length)
                 for (let sub of subtasks) {
                     let user = { user: { name: bucDoc.user.name } }
 

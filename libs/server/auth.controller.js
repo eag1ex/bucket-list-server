@@ -3,7 +3,7 @@
  * - ServerAuth extension
  */
 module.exports = function(expressApp, dbc, jwt) {
-    const { log, warn, attention, onerror } = require('x-utils-es/umd')
+    const { log, warn, delay, attention, onerror } = require('x-utils-es/umd')
     const config = require('../../config')
     const { validate, getToken, JWTverifyAccess } = require('../utils')
     const ENV = config.env // development,production
@@ -36,11 +36,13 @@ module.exports = function(expressApp, dbc, jwt) {
             try {
                 let purged = await this.dbc.db.purgeDB()
                 attention('[purged]', purged)
+                await delay(500)
                 // return
 
                 // ------- NOTE populate our data with data.inserts.js
                 let populatedBucketList = await this.dbc.db.bucketCollectionInsert(dataInsert, defaultUser)
                 attention('[bucketCollectionInsert]')
+                await delay(300)
                 return true
             } catch (err) {
                 onerror('[resetDB]', err)
