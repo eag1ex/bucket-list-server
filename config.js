@@ -1,6 +1,6 @@
 
 // NOTE KEEP this file secure, do not push to public repo
-const port = process.env.PORT || 8080
+const port = process.env.PORT || 5000
 
 // NOTE you can host mongoDB on local environment also, just need to se it up
 const dbRemote = true // process.env.MY_APP === 'bucketlist' // true/false
@@ -18,7 +18,7 @@ module.exports = {
     viewsDir: path.join(__dirname, './views'),
     mongo: {
         remote: dbRemote,
-        database: dbRemote ? `mongodb://bucketlist-user1:PlFn1YGC6X1p93XNdyCDw4X3seGeG10pqyVtcwyt@cluster0-shard-00-00.ezid2.mongodb.net:27017,cluster0-shard-00-01.ezid2.mongodb.net:27017,cluster0-shard-00-02.ezid2.mongodb.net:27017/bucketList?ssl=true&replicaSet=atlas-l1caqj-shard-0&authSource=admin&retryWrites=true&w=majority` : `mongodb://localhost/bucket_list`,
+        database: dbRemote ? `mongodb://bucketlist-user1:POF-l_78uWVPcgEh34biT8ZHfYnReTiYbyfBCAvK@cluster0-shard-00-00.ezid2.mongodb.net:27017,cluster0-shard-00-01.ezid2.mongodb.net:27017,cluster0-shard-00-02.ezid2.mongodb.net:27017/bucketList?ssl=true&replicaSet=atlas-l1caqj-shard-0&authSource=admin&retryWrites=true&w=majority` : `mongodb://localhost/bucket_list`,
         defaultUser: 'johndoe' // our database default user
     }
 }
