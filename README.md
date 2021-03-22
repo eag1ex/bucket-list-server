@@ -12,7 +12,7 @@ Full Rest API Express.js server with Mongoose/mongoDB integration, backend API i
 * Authentication and user session
 
 
-#### Demo
+### Demo
 Full featured hosted demo of `bucket-list` on :
 ```sh
 https://whispering-everglades-48688.herokuapp.com/login
@@ -21,6 +21,7 @@ https://whispering-everglades-48688.herokuapp.com/login
 ```
 - demo database is reset and pureged for every session
 - limited session time, hosted on free dyno, initial load may take bit longer
+
 
 #### Client
 For client app visit: `https://bitbucket.org/eag1ex/bucket-list-app-client`
@@ -103,6 +104,7 @@ Application stack: Express.js, Mongoose.js, MongoDB, REST/API, Javascript, jsonw
 #### Tests
 
 * For now there are no coverage and tests optimized, i will get around to it.
+
 
 
 #### TODO
