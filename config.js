@@ -1,6 +1,6 @@
 
 // NOTE KEEP this file secure, do not push to public repo
-const port = process.env.PORT || 5000
+const port = process.env.PORT || 8080
 
 // NOTE you can host mongoDB on local environment also, just need to se it up
 const dbRemote = true // process.env.MY_APP === 'bucketlist' // true/false
