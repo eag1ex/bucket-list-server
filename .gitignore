@@ -11,7 +11,9 @@ desktop.ini
 info.md
 mongoDB.bat
 ./example.js
-#config.js
+
+# for private commits only
+config.js
 
 # Docker
 Dockerfile
