@@ -19,16 +19,6 @@ module.exports = (dbc, mongo, jwt) => {
             }
         }
 
-        // async onMongoReady(req, res) {
-        //     try {
-        //         await mongo.mongooseReady.promise
-        //         return true
-        //     } catch (err) {
-        //         onerror('[onMongoReady]', 'no db connection ?')
-        //         // return res.status(400).json({ error: 'not connected to database' })
-        //         throw new Error('no db connection')
-        //     }
-        // }
         /**
          * /bucket/app
          * render out app here
@@ -37,7 +27,11 @@ module.exports = (dbc, mongo, jwt) => {
          */
         app(req, res, next) {
             if (req.url.indexOf('/api') !== -1) return next()
-            if (['.jpg', '.png', '.ico', '.json', '.js', '.css', '.txt', '.map'].indexOf(req.url) !== -1) return next()
+
+            let asset = ['.jpg', '.png', '.ico', '.json', '.js', '.css', '.txt', '.map'].filter(n => {
+                return n.indexOf(req.url) !== -1
+            }).length
+            if (asset) return next()
             else return res.render('../bucket-app/index')
         }
 
