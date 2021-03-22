@@ -11,6 +11,7 @@ module.exports = {
     port: port,
     'secret': 'dsfkj89435klsdfj84543985kdsjflsy4875',
     // NOTE {MY_APP} is a custom var set on heroku to distinguish between environments
+    // to run app on local host in production, you need to rebuild it with localhost api
     HOST: process.env.MY_APP === 'bucketlist' ? `https://whispering-everglades-48688.herokuapp.com` : `http://localhost:${port}`,
     viewsDir: path.join(__dirname, './views'),
     mongo: {
