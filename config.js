@@ -1,5 +1,8 @@
-const port = process.env.PORT || 8080
-const dbRemote = true
+const port = process.env.PORT || 5000
+
+// NOTE you can host mongoDB on local environment also, just need to se it up
+const dbRemote = true // process.env.MY_APP === 'bucketlist' // true/false
+
 const path = require('path')
 module.exports = {
 
@@ -7,8 +10,8 @@ module.exports = {
     env: 'production', // development,production
     port: port,
     'secret': 'dsfkj89435klsdfj84543985kdsjflsy4875',
-    // HOST: `http://localhost:${port}`, // in localhost keep this line
-    HOST: !dbRemote ? `http://localhost:${port}` : `https://whispering-everglades-48688.herokuapp.com`,
+    // NOTE {MY_APP} is a custom var set on heroku to distinguish between environments
+    HOST: process.env.MY_APP === 'bucketlist' ? `https://whispering-everglades-48688.herokuapp.com` : `http://localhost:${port}`,
     viewsDir: path.join(__dirname, './views'),
     mongo: {
         remote: dbRemote,

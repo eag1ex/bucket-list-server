@@ -35,8 +35,9 @@ module.exports = (DEBUG = true) => {
     app.set('view engine', 'html')
     app.set('views', path.join(config.viewsDir, 'app'))
     app.set('views', path.join(config.viewsDir, 'admin'))
+    // static routes
     app.use('/login/', express.static(path.join(config.viewsDir, './admin')))
-
+    app.use(express.static(path.join(config.viewsDir, './bucket-app')))
     // save logged in session and manage expiry
     session(app)
 
@@ -92,7 +93,8 @@ module.exports = (DEBUG = true) => {
     mongo.init().then(n => {
         // ------ run server
         app.listen(config.port)
-        console.log('Server running on port:', config.port)
+        if (config.mongo.remote) attention('[remote][server]', 'running on port:', config.port)
+        else attention('[localhost][server]', 'running on port:', config.port)
     }).catch(err => {
         onerror('[mongo]', err)
         onerror('[mongo]', 'server did not start')
