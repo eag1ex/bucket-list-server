@@ -59,7 +59,17 @@ module.exports = function(expressApp, dbc, jwt) {
             return ['/auth', '/login', '/signout', '/welcome', '/']
         }
 
-        login(req, res, next) {
+        async login(req, res, next) {
+            // check still in valid session then re/route
+            const token = (req.session || {}).accessToken || getToken(req.headers)
+            try {
+                await JWTverifyAccess(jwt, req, token)
+                log('[login][session]', 'still valid')
+                return res.redirect(config.HOST + '/bucket/')
+            } catch (err) {
+                //
+            }
+
             res.setHeader('Content-Type', 'text/html')
             return res.render('login', {
             })
