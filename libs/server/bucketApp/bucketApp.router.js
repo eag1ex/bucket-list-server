@@ -17,7 +17,7 @@ module.exports = (config = {}, db, mongo, jwt, DEBUG) => {
 
     // app static routes
     // bucketRouter.use(express.static(path.join(config.viewsDir, './bucket-app')))
-
+    // TODO move bucket/api to seperate route
     // ---------- set server routes
     bucketRouter.get('/api/list', controllers.bucketList.bind(controllers))
     bucketRouter.post('/api/create', controllers.createBucket.bind(controllers))

@@ -26,6 +26,7 @@ module.exports = (dbc, mongo, jwt) => {
          * @param {*} res
          */
         app(req, res, next) {
+            // TODO move bucket/api to seperate route
             if (req.url.indexOf('/api') !== -1) return next()
 
             let asset = ['.jpg', '.png', '.ico', '.json', '.js', '.css', '.txt', '.map'].filter(n => {
