@@ -111,9 +111,6 @@ Application stack: Express.js, Mongoose.js, MongoDB, REST/API, Javascript, jsonw
 #### TODO
 
 * NYC and Mocha for coverage
-* Stage MongoDB on `https://www.mongodb.com/cloud/atlas`
-* State server on Heroku. 
-
 
 
 ##### LICENSE
