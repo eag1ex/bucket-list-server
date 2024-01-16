@@ -11,13 +11,13 @@ module.exports = {
     // in production the authentication is enabled
     env: 'development', // development,production
     port: port,
-    'secret': '', // NOTE provide your static token
+    secret: 'abc', // NOTE provide your static token
     HOST: `http://localhost:${port}`, //  in localhost keep this line
     // HOST: !dbRemote ? `http://localhost:${port}` : `www`,
     viewsDir: path.join(__dirname, './views'),
     mongo: {
         remote: dbRemote,
-        database: dbRemote ? `mongodb://localhost/bucket_list` : `mongodb://localhost/bucket_list`,
+        database: dbRemote ? `mongodb://localhost:27017/bucket_list` : `mongodb://localhost:27017/bucket_list`,
         defaultUser: 'johndoe' // our project database default user
     }
 }
